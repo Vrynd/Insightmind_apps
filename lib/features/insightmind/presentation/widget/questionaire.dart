@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:insightmind_app/features/insightmind/domain/entities/question.dart';
 
-class QuestionApp extends StatelessWidget {
+class Questionnaire extends StatelessWidget {
+  final int index;
   final ColorScheme color;
   final TextTheme textStyle;
   final Question question;
   final int? selectedScore;
   final ValueChanged<int> onChanged;
 
-  const QuestionApp({
+  const Questionnaire({
     super.key,
+    required this.index,
     required this.color,
     required this.textStyle,
     required this.question,
@@ -34,13 +36,18 @@ class QuestionApp extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                '$index. ',
+                style: textStyle.titleMedium?.copyWith(
+                  color: color.onSurfaceVariant,
+                ),
+              ),
               Expanded(
                 child: Text(
                   question.text,
                   style: textStyle.titleMedium?.copyWith(
                     color: color.onSurfaceVariant,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5
+                    height: 1.3,
                   ),
                 ),
               ),
@@ -49,12 +56,15 @@ class QuestionApp extends StatelessWidget {
                 Icon(Icons.check_circle, color: color.primary, size: 20),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
           Container(
             decoration: BoxDecoration(
-              color: color.secondaryContainer,
+              color: color.surfaceContainerHigh.withValues(alpha: .5),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: color.outlineVariant, width: 1.3),
+              border: Border.all(
+                color: color.outlineVariant.withValues(alpha: 0.3),
+                width: 1.2,
+              ),
             ),
             child: Column(
               children: [
@@ -72,7 +82,7 @@ class QuestionApp extends StatelessWidget {
                       if (states.contains(WidgetState.selected)) {
                         return color.primary;
                       }
-                      return color.outline;
+                      return color.outline.withValues(alpha: .8);
                     }),
                     title: Text(
                       question.options[i].label,
@@ -88,7 +98,7 @@ class QuestionApp extends StatelessWidget {
                     Divider(
                       height: 0,
                       thickness: 1,
-                      color: color.outlineVariant,
+                      color: color.outlineVariant.withValues(alpha: 0.3),
                     ),
                 ],
               ],

@@ -45,7 +45,7 @@ const defaultQuestions = <Question>[
   
   Question(
     id: 'q3',
-    text: 'Mengalami masalah tidur; seperti sulit tidur, tidur terlalu banyak, atau bangun terlalu cepat?',
+    text: 'Mengalami masalah tidur, seperti sulit tidur, tidur terlalu banyak, atau bangun terlalu cepat?',
     options: _standardOptions,
   ),
   Question(
