@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:insightmind_app/features/insightmind/domain/entities/mental_result.dart';
 
-class ResultTileApp extends StatelessWidget {
-  const ResultTileApp({
+class ResultTile extends StatelessWidget {
+  const ResultTile({
     super.key,
     required this.color,
     required this.textStyle,

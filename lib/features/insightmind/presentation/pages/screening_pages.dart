@@ -8,8 +8,8 @@ import 'package:insightmind_app/features/insightmind/presentation/widget/indicat
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/questionaire.dart';
 
-class HomePage extends ConsumerWidget {
-  const HomePage({super.key});
+class ScreeningPages extends ConsumerWidget {
+  const ScreeningPages({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,7 +26,6 @@ class HomePage extends ConsumerWidget {
 
     final answeredScores = questionnaireState.answers.values.toList();
     final totalScore = questionnaireState.totalScore;
-
     final isComplete = questionnaireState.isComplete;
 
     return ScaffoldApp(
@@ -78,7 +77,7 @@ class HomePage extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
 
-              // Jadikan Daftar Pertanyaan ini menjadi widget yang terpisah
+              // Daftar Pertanyaan
               for (int i = 0; i < questions.length; i++) ...[
                 Questionnaire(
                   index: i + 1,
@@ -87,24 +86,75 @@ class HomePage extends ConsumerWidget {
                   textStyle: textStyle,
                   selectedScore: questionnaireState.answers[questions[i].id],
                   onChanged: (score) {
-                    questionnaireNotifier.selectAnswer(
-                      questionId: questions[i].id,
-                      score: score,
-                    );
+                    final canAnswerAllPrev =
+                        i == 0 ||
+                        List.generate(i, (index) => questions[index].id).every(
+                          (id) => questionnaireState.answers.containsKey(id),
+                        );
+                    if (canAnswerAllPrev) {
+                      questionnaireNotifier.selectAnswer(
+                        questionId: questions[i].id,
+                        score: score,
+                      );
+                    } else {
+                      String message;
+
+                      if (i == 1) {
+                        message =
+                            'Silakan mulai dari pertanyaan pertama terlebih dahulu';
+                      } else {
+                        message =
+                            'Silakan jawab pertanyaan nomor $i terlebih dahulu';
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            message,
+                          ),
+                          behavior: SnackBarBehavior.floating,
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    }
                   },
                 ),
                 if (i != questions.length - 1) const SizedBox(height: 16),
               ],
 
-              //Jadikan Ringkasan Jawaban ini menjadi widget yang terpisah
+              // Ringkasan Jawaban
               if (answeredCount > 0)
                 AnswerSummary(
                   answeredScores: answeredScores,
+                  questions: questions,
                   totalScore: totalScore,
                   isComplete: isComplete,
                   color: color,
                   textStyle: textStyle,
                 ),
+              const SizedBox(height: 12),
+
+              Align(
+                alignment: Alignment.centerLeft,
+                child: GestureDetector(
+                  onTap: () {
+                    ref.read(questionnaireProvider.notifier).reset();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Progress anda berhasil dipulihkan'),
+                        behavior: SnackBarBehavior.floating,
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'Pulihkan Progress',
+                    style: textStyle.bodyLarge?.copyWith(
+                      color: color.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -116,17 +166,29 @@ class HomePage extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              flex: 3,
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                style: ButtonStyle(
+                  shape: WidgetStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                  minimumSize: const Size(double.infinity, 52),
-                  backgroundColor: isComplete
-                      ? color.primary
-                      : color.surfaceContainerHigh,
-                  elevation: 0,
+                  minimumSize: WidgetStateProperty.all(
+                    const Size(double.infinity, 48),
+                  ),
+                  elevation: WidgetStateProperty.all(0),
+                  backgroundColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.disabled)) {
+                      return color.surfaceContainerHigh.withValues(alpha: 0.8);
+                    }
+                    return color.primary;
+                  }),
+                  foregroundColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.disabled)) {
+                      return color.outlineVariant.withValues(alpha: 0.9);
+                    }
+                    return color.onPrimary;
+                  }),
                 ),
                 onPressed: isComplete
                     ? () {
@@ -154,35 +216,6 @@ class HomePage extends ConsumerWidget {
                     fontWeight: FontWeight.w600,
                     color: isComplete ? color.onPrimary : color.outlineVariant,
                   ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              flex: 1,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  minimumSize: Size(double.infinity, 52),
-                  backgroundColor: color.surfaceContainerHigh,
-                  elevation: 0,
-                ),
-                onPressed: () {
-                  ref.read(questionnaireProvider.notifier).reset();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Progress anda berhasil dipulihkan'),
-                      behavior: SnackBarBehavior.floating,
-                      duration: Duration(seconds: 1),
-                    ),
-                  );
-                },
-                label: Icon(
-                  Icons.refresh_outlined,
-                  size: 30,
-                  color: color.error,
                 ),
               ),
             ),

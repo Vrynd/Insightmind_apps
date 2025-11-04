@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/score_provider.dart';
-import 'package:insightmind_app/features/insightmind/presentation/widget/recomendation_app.dart';
-import 'package:insightmind_app/features/insightmind/presentation/widget/result_tile_app.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/recomendation.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/result_tile.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 
 class ResultPage extends ConsumerWidget {
@@ -53,9 +53,9 @@ class ResultPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              ResultTileApp(color: color, textStyle: textStyle, result: result),
+              ResultTile(color: color, textStyle: textStyle, result: result),
               const SizedBox(height: 16),
-              RecomendationApp(
+              Recomendation(
                 color: color,
                 textStyle: textStyle,
                 recommendation: recommendation,

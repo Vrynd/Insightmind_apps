@@ -18,18 +18,6 @@ class IndicatorProggres extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isEmpty = answeredCount == 0;
-    final bool isComplete = answeredCount == totalCount && totalCount > 0;
-
-    String message;
-    if (isEmpty) {
-      message = "Mulailah untuk Melihat Progres Anda";
-    } else if (isComplete) {
-      message = "Selesai! Semua Pertanyaan Telah dijawab";
-    } else {
-      message = "$answeredCount dari $totalCount Sudah dijawab";
-    }
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -39,57 +27,81 @@ class IndicatorProggres extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             'Progres Anda',
-            style: textStyle.titleSmall?.copyWith(
-              color: color.outlineVariant,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            message,
             style: textStyle.titleMedium?.copyWith(
-              color: color.primary,
+              color: color.onSurfaceVariant,
               fontWeight: FontWeight.w600,
-              fontSize: 19,
-              height: 1.3
+              height: 1.2,
+              fontSize: 18.8,
             ),
           ),
-          const SizedBox(height: 10),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Stack(
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+              color: color.surfaceContainerHigh.withValues(alpha: .5),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  height: 14,
-                  decoration: BoxDecoration(
-                    color: color.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(10),
+                Text(
+                  "${(progressValue * 100).toInt()}%",
+                  style: textStyle.titleLarge?.copyWith(
+                    color: color.primary,
+                    height: 1.2,
+                    fontSize: 25,
                   ),
                 ),
-                if (!isEmpty)
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 500),
-                        height: 14,
-                        width:
-                            constraints.maxWidth *
-                            progressValue.clamp(0.0, 1.0),
+                const SizedBox(height: 8),
+
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: 10,
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF3E5F90), Color(0xFF5D8AA8)],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
+                          color: color.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                      );
-                    },
+                      ),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          return AnimatedContainer(
+                            duration: const Duration(milliseconds: 500),
+                            height: 10,
+                            width:
+                                constraints.maxWidth *
+                                progressValue.clamp(0.0, 1.0),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF3E5F90), Color(0xFF5D8AA8)],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
+                ),
+                const SizedBox(height: 10),
+
+                Text(
+                  "$answeredCount dari $totalCount Pertanyaan",
+                  style: textStyle.bodyLarge?.copyWith(
+                    color: color.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
+                    height: 1.3,
+                  ),
+                ),
               ],
             ),
           ),

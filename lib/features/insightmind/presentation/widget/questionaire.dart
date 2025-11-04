@@ -40,6 +40,8 @@ class Questionnaire extends StatelessWidget {
                 '$index. ',
                 style: textStyle.titleMedium?.copyWith(
                   color: color.onSurfaceVariant,
+                  height: 1.2,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               Expanded(
@@ -51,12 +53,13 @@ class Questionnaire extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 8),
               if (isAnswered)
-                Icon(Icons.check_circle, color: color.primary, size: 20),
+                Icon(Icons.check_circle, color: color.primary, size: 19),
             ],
           ),
           const SizedBox(height: 12),
+
           Container(
             decoration: BoxDecoration(
               color: color.surfaceContainerHigh.withValues(alpha: .5),
@@ -69,28 +72,53 @@ class Questionnaire extends StatelessWidget {
             child: Column(
               children: [
                 for (int i = 0; i < question.options.length; i++) ...[
-                  RadioListTile<int>(
-                    value: question.options[i].score,
-                    groupValue: selectedScore,
-                    onChanged: (int? newScore) {
-                      if (newScore != null) onChanged(newScore);
-                    },
-                    dense: true,
-                    visualDensity: const VisualDensity(horizontal: -4),
-                    contentPadding: EdgeInsets.zero,
-                    fillColor: WidgetStateProperty.resolveWith((states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return color.primary;
-                      }
-                      return color.outline.withValues(alpha: .8);
-                    }),
-                    title: Text(
-                      question.options[i].label,
-                      style: textStyle.bodyLarge?.copyWith(
-                        color: question.options[i].score == selectedScore
-                            ? color.onSurface
-                            : color.onSurfaceVariant,
-                        fontWeight: FontWeight.w500,
+                  InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: () => onChanged(question.options[i].score),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 1.5,
+                        horizontal: 0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Transform.scale(
+                            scale: 1.0,
+                            child: Radio<int>(
+                              value: question.options[i].score,
+                              groupValue: selectedScore,
+                              onChanged: (int? newScore) {
+                                if (newScore != null) onChanged(newScore);
+                              },
+                              fillColor: WidgetStateProperty.resolveWith((
+                                states,
+                              ) {
+                                if (states.contains(WidgetState.selected)) {
+                                  return color.primary;
+                                }
+                                return color.outline.withValues(alpha: .5);
+                              }),
+                            ),
+                          ),
+                          const SizedBox(width: 2),
+                          Expanded(
+                            child: Text(
+                              question.options[i].label,
+                              style: textStyle.bodyLarge?.copyWith(
+                                fontSize: 17,
+                                color:
+                                    question.options[i].score == selectedScore
+                                    ? color.outline
+                                    : color.outline,
+                                fontWeight:
+                                    question.options[i].score == selectedScore
+                                    ? FontWeight.w600
+                                    : FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

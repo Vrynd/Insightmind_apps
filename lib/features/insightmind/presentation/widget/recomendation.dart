@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class RecomendationApp extends StatelessWidget {
-  const RecomendationApp({
+class Recomendation extends StatelessWidget {
+  const Recomendation({
     super.key,
     required this.color,
     required this.textStyle,
