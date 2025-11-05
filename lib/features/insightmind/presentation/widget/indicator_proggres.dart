@@ -29,16 +29,18 @@ class IndicatorProggres extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Judul Progres
           Text(
             'Progres Anda',
             style: textStyle.titleMedium?.copyWith(
-              color: color.onSurfaceVariant,
+              color: color.outline.withValues(alpha: 0.8),
               fontWeight: FontWeight.w600,
               height: 1.2,
               fontSize: 18.8,
             ),
           ),
           const SizedBox(height: 12),
+
           Container(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             decoration: BoxDecoration(
@@ -49,6 +51,7 @@ class IndicatorProggres extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Persentase Progres
                 Text(
                   "${(progressValue * 100).toInt()}%",
                   style: textStyle.titleLarge?.copyWith(
@@ -59,6 +62,7 @@ class IndicatorProggres extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
 
+                // Progress Bar
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Stack(
@@ -94,6 +98,7 @@ class IndicatorProggres extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
 
+                // Jumlah pertanyaan yang dijawab
                 Text(
                   "$answeredCount dari $totalCount Pertanyaan",
                   style: textStyle.bodyLarge?.copyWith(

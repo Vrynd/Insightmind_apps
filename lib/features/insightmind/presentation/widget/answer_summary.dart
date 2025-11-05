@@ -78,16 +78,19 @@ class _AnswerSummaryState extends State<AnswerSummary> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Judul Ringkasan Jawaban
               Text(
                 'Ringkasan Jawaban',
                 style: widget.textStyle.titleMedium?.copyWith(
-                  color: widget.color.onSurfaceVariant,
+                  color: widget.color.outline.withValues(alpha: 0.8),
                   fontWeight: FontWeight.w600,
+                  height: 1.2,
                   fontSize: 18.8,
                 ),
               ),
               const SizedBox(height: 12),
 
+              // Daftar ringkasan yang sudah dijawab
               ...List.generate(visibleCount, (index) {
                 final score = widget.answeredScores[index];
                 final question = widget.questions[index];
@@ -96,8 +99,10 @@ class _AnswerSummaryState extends State<AnswerSummary> {
                   orElse: () => const AnswerOption(label: '-', score: 0),
                 );
 
+                // Warna berdasarkan skor jawaban
                 final baseColor = _getScoreColor(score);
                 final bgColor = _getBackgroundColor(score);
+
                 return Container(
                   margin: const EdgeInsets.only(bottom: 4),
                   decoration: BoxDecoration(
@@ -137,6 +142,7 @@ class _AnswerSummaryState extends State<AnswerSummary> {
                 );
               }),
 
+              // Tombol untuk melihat lebih banyak atau sedikit ringkasan jawaban
               if (totalAnswers > _defaultVisibleCount)
                 TextButton.icon(
                   style: TextButton.styleFrom(
@@ -152,13 +158,13 @@ class _AnswerSummaryState extends State<AnswerSummary> {
                   },
                   icon: Icon(
                     _isExpanded ? Icons.expand_less : Icons.expand_more,
-                    color: widget.color.primary,
-                    size: 20,
+                    color: widget.color.tertiary,
+                    size: 22,
                   ),
                   label: Text(
                     _isExpanded ? 'Lihat Lebih Sedikit' : 'Lihat Lainnya',
                     style: widget.textStyle.bodyLarge?.copyWith(
-                      color: widget.color.primary,
+                      color: widget.color.tertiary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

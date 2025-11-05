@@ -33,6 +33,7 @@ class Questionnaire extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Nomor dan Teks Pertanyaan
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -54,12 +55,15 @@ class Questionnaire extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
+
+              // Icon checklist jika sudah menjawab
               if (isAnswered)
                 Icon(Icons.check_circle, color: color.primary, size: 19),
             ],
           ),
           const SizedBox(height: 12),
 
+          // Opsi Jawaban
           Container(
             decoration: BoxDecoration(
               color: color.surfaceContainerHigh.withValues(alpha: .5),
@@ -71,6 +75,7 @@ class Questionnaire extends StatelessWidget {
             ),
             child: Column(
               children: [
+                // Menampilkan daftar opsi jawaban
                 for (int i = 0; i < question.options.length; i++) ...[
                   InkWell(
                     borderRadius: BorderRadius.circular(8),
@@ -102,6 +107,7 @@ class Questionnaire extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 2),
+
                           Expanded(
                             child: Text(
                               question.options[i].label,
@@ -122,6 +128,8 @@ class Questionnaire extends StatelessWidget {
                       ),
                     ),
                   ),
+
+                  // Batas antar opsi jawaban
                   if (i != question.options.length - 1)
                     Divider(
                       height: 0,
