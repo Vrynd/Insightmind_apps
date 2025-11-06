@@ -1,22 +1,21 @@
 import 'package:hive/hive.dart';
+part 'screening_record.g.dart'; // File adapter hasil generate build_runner
 
-part 'screening_record.g.dart'; // WEEK6: file adapter hasil generate build_runner
-
-@HiveType(typeId: 1) // WEEK6: beri typeId unik untuk model ini
+@HiveType(typeId: 1) // Beri typeId unik untuk model ini
 class ScreeningRecord extends HiveObject {
-  @HiveField(0) // WEEK6: field ini akan diserialisasi sebagai kolom
+  @HiveField(0) // Field ini akan diserialisasi sebagai kolom
   String id;
 
-  @HiveField(1) // WEEK6
+  @HiveField(1)
   DateTime timestamp;
 
-  @HiveField(2) // WEEK6
+  @HiveField(2)
   int score;
 
-  @HiveField(3) // WEEK6
+  @HiveField(3)
   String riskLevel;
 
-  @HiveField(4) // WEEK6: opsional untuk catatan pengguna
+  @HiveField(4)
   String? note;
 
   ScreeningRecord({
