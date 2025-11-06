@@ -8,11 +8,38 @@ import 'package:insightmind_app/features/insightmind/presentation/widget/scaffol
 import 'package:insightmind_app/features/insightmind/presentation/widget/questionaire.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/show_result_button.dart';
 
-class ScreeningPages extends ConsumerWidget {
-  const ScreeningPages({super.key});
+class ScreeningScreen extends ConsumerStatefulWidget {
+  const ScreeningScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ScreeningScreen> createState() => _ScreeningScreenState();
+}
+
+class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isScrolling = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scrollController.addListener(() {
+      if (_scrollController.offset > 0 && !_isScrolling) {
+        setState(() => _isScrolling = true);
+      } else if (_scrollController.offset <= 0 && _isScrolling) {
+        setState(() => _isScrolling = false);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
     final textStyle = Theme.of(context).textTheme;
 
@@ -32,37 +59,44 @@ class ScreeningPages extends ConsumerWidget {
       backgroundColor: color.surface,
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        backgroundColor: color.surfaceContainerLowest,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Insight',
-              style: textStyle.titleLarge?.copyWith(
-                color: color.primary,
-                fontSize: 26,
-                fontWeight: FontWeight.w700,
-              ),
+        backgroundColor: _isScrolling ? color.surfaceContainerLowest : color.surface,
+        centerTitle: true,
+        title: AnimatedOpacity(
+          duration: const Duration(milliseconds: 300),
+          opacity: _isScrolling ? 1.0 : 0.0,
+          child: Text(
+            'Kuesioner',
+            style: textStyle.titleMedium?.copyWith(
+              color: color.onSurfaceVariant,
+              fontWeight: FontWeight.w600,
+              fontSize: 19,
+              height: 1.2,
             ),
-            Text(
-              'Mind',
-              style: textStyle.titleLarge?.copyWith(
-                color: color.secondary,
-                fontSize: 26,
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
+          ),
+        ),
+        leading: BackButton(
+          color: color.onSurfaceVariant,
         ),
       ),
-
-      body: SafeArea(
+      body: ScrollConfiguration(
+        behavior: const ScrollBehavior().copyWith(
+          overscroll: false,
+          physics: BouncingScrollPhysics(),
+        ),
         child: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+          controller: _scrollController,
+          padding: EdgeInsets.only(top: 0, left: 20, right: 20, bottom: 30),
           children: [
-            // Indicator Progress
+            Text(
+              'Kuesioner',
+              style: textStyle.headlineMedium?.copyWith(
+                color: color.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+                height: 1.1
+              ),
+            ),
+            const SizedBox(height: 10),
+
             IndicatorProggres(
               progressValue: progressValue,
               answeredCount: answeredCount,
@@ -72,7 +106,6 @@ class ScreeningPages extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
 
-            // Daftar Pertanyaan
             for (int i = 0; i < questions.length; i++) ...[
               Questionnaire(
                 index: i + 1,
@@ -81,37 +114,50 @@ class ScreeningPages extends ConsumerWidget {
                 textStyle: textStyle,
                 selectedScore: questionnaireState.answers[questions[i].id],
                 onChanged: (score) {
-                  final firstUnansweredIndex = questions.indexWhere(
-                    (q) => !questionnaireState.answers.containsKey(q.id),
+                  final isAnswered = questionnaireState.answers.containsKey(
+                    questions[i].id,
                   );
 
-                  if (firstUnansweredIndex == i) {
-                    // Jika ini pertanyaan pertama yang belum dijawab, izinkan memilih jawaban
+                  if (isAnswered) {
                     questionnaireNotifier.selectAnswer(
                       questionId: questions[i].id,
                       score: score,
                     );
                   } else {
-                    // Menampilkan pesan ketika mencoba menjawab pertanyaan yang belum boleh dijawab
-                    final questionNumber = firstUnansweredIndex + 1;
-                    final message = questionNumber == 1
-                        ? 'Silakan mulai dari pertanyaan pertama terlebih dahulu'
-                        : 'Silakan jawab pertanyaan nomor $questionNumber terlebih dahulu';
+                    final canAnswer =
+                        i == 0 ||
+                        List.generate(i, (index) => questions[index].id).every(
+                          (id) => questionnaireState.answers.containsKey(id),
+                        );
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(message),
-                        behavior: SnackBarBehavior.floating,
-                        duration: const Duration(seconds: 1),
-                      ),
-                    );
+                    if (canAnswer) {
+                      questionnaireNotifier.selectAnswer(
+                        questionId: questions[i].id,
+                        score: score,
+                      );
+                    } else {
+                      final firstUnansweredIndex = questions.indexWhere(
+                        (q) => !questionnaireState.answers.containsKey(q.id),
+                      );
+                      final questionNumber = firstUnansweredIndex + 1;
+                      final message = questionNumber == 1
+                          ? 'Silakan mulai dari pertanyaan pertama terlebih dahulu'
+                          : 'Silakan jawab pertanyaan nomor $questionNumber terlebih dahulu';
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(message),
+                          behavior: SnackBarBehavior.floating,
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    }
                   }
                 },
               ),
               if (i != questions.length - 1) const SizedBox(height: 16),
             ],
 
-            // Ringkasan Jawaban
             if (answeredCount > 0)
               AnswerSummary(
                 answeredScores: answeredScores,
@@ -124,14 +170,11 @@ class ScreeningPages extends ConsumerWidget {
           ],
         ),
       ),
-
       bottomNavigationBar: BottomAppBar(
         color: color.surfaceContainerLowest,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Button Tampilkan Hasil
             ShowResultButton(
               isComplete: isComplete,
               color: color,
@@ -139,8 +182,6 @@ class ScreeningPages extends ConsumerWidget {
               questionnaireState: questionnaireState,
             ),
             const SizedBox(width: 10),
-
-            // Button Reset Progress
             ResetProgressButton(color: color, textStyle: textStyle),
           ],
         ),

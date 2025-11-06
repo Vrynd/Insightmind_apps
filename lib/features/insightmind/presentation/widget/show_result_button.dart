@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:insightmind_app/features/insightmind/presentation/pages/result_pages.dart';
+import 'package:insightmind_app/features/insightmind/presentation/screen/result_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/score_provider.dart';
 
 class ShowResultButton extends ConsumerWidget {
@@ -47,7 +47,7 @@ class ShowResultButton extends ConsumerWidget {
                 ref.read(answersProvider.notifier).state = answerOrdered;
 
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const ResultPage()),
+                  MaterialPageRoute(builder: (context) => const ResultScreen()),
                 );
               }
             : null,

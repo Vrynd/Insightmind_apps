@@ -15,6 +15,7 @@ class ResetProgressButton extends ConsumerWidget {
   void _showConfirmationSheet(BuildContext context, WidgetRef ref) {
     showModalBottomSheet(
       context: context,
+      showDragHandle: true,
       useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -22,24 +23,34 @@ class ResetProgressButton extends ConsumerWidget {
       builder: (context) {
         return Padding(
           padding: const EdgeInsets.only(
-            top: 18,
+            top: 0,
             left: 20,
             right: 20,
             bottom: 54,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Apakah anda yakin ingin memulihkan progress?',
+                'Reset Progress',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: color.onSurface,
+                  fontSize: 24,
+                ),
+              ),
+
+              const SizedBox(height: 8),
+              Text(
+                'Apakah anda yakin ingin memulihkan\nprogress?',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: color.outline,
                   fontSize: 18.8,
                   height: 1.2,
                 ),
+                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 16),
 
               Row(
                 children: [

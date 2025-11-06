@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class ResultSummary extends StatelessWidget {
   final int score;
   final String riskLevel;
-  final Color riskColor;
   final ColorScheme color;
   final TextTheme textStyle;
 
@@ -11,13 +10,31 @@ class ResultSummary extends StatelessWidget {
     super.key,
     required this.score,
     required this.riskLevel,
-    required this.riskColor,
     required this.color,
     required this.textStyle,
   });
 
+  Color _getRiskColor(String level, ColorScheme color) {
+    switch (level.toLowerCase()) {
+      case 'minimal':
+        return Colors.green;
+      case 'ringan':
+        return Colors.lightGreen;
+      case 'sedang':
+        return Colors.orange;
+      case 'cukup berat':
+        return Colors.deepOrange;
+      case 'berat':
+        return Colors.red;
+      default:
+        return color.primary;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final riskColor = _getRiskColor(riskLevel, color);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -86,7 +103,7 @@ class ResultSummary extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'Tingkat Risiko',
+                      'Tingkat Depresi',
                       style: textStyle.bodyLarge?.copyWith(
                         color: color.outline,
                         height: 1.4,

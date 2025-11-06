@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:insightmind_app/features/insightmind/presentation/pages/screening_pages.dart';
+import 'package:insightmind_app/features/insightmind/presentation/screen/navigation_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/themes/theme_app.dart';
 
 class InsightMindApp extends StatelessWidget {
@@ -13,7 +13,7 @@ class InsightMindApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       theme: ThemeApp.lightTheme,
       darkTheme: ThemeApp.darkTheme,
-      home: const ScreeningPages(),
+      home: const NavigationScreen(),
     );
   }
 }
