@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:insightmind_app/features/insightmind/presentation/providers/history_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/score_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/recomendation.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/result_summary.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/save_result_button.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 
 class ResultScreen extends ConsumerStatefulWidget {
@@ -15,6 +17,7 @@ class ResultScreen extends ConsumerStatefulWidget {
 class _ResultScreenState extends ConsumerState<ResultScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isScrolling = false;
+  bool _saved = false;
 
   @override
   void initState() {
@@ -33,6 +36,26 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  // Fungsi untuk menyimpan hasil
+  Future<void> _saveResult() async {
+    if (_saved) return;
+    final result = ref.read(resultProvider);
+    await ref
+        .read(historyRepositoryProvider)
+        .addRecord(score: result.score, riskLevel: result.riskLevel);
+
+    setState(() => _saved = true);
+
+    // Menampilkan informasi
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Hasil berhasil disimpan!'),
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 1),
+      ),
+    );
   }
 
   @override
@@ -156,19 +179,33 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
               textStyle: textStyle,
               recommendation: recommendation,
             ),
+            const SizedBox(height: 30),
+
+            Center(
+              child: Text(
+                'Disclaimer: InsightMind bersifat edukatif, bukan alat diagnosis medis',
+                style: textStyle.bodyMedium?.copyWith(
+                  color: color.outline,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
           ],
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        color: color.surfaceContainerLow,
-        child: Center(
-          child: Text(
-            'Disclaimer: InsightMind bersifat edukatif, bukan alat diagnosis medis',
-            style: textStyle.bodyMedium?.copyWith(
-              color: color.outline,
-              fontStyle: FontStyle.italic,
+        color: color.surfaceContainerLowest,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SaveResultButton(
+              color: color,
+              textStyle: textStyle,
+              saved: _saved,
+              onPressed: _saveResult,
             ),
-          ),
+            const SizedBox.shrink(),
+          ],
         ),
       ),
     );
