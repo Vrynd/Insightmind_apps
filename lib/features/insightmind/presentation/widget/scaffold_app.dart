@@ -7,6 +7,7 @@ class ScaffoldApp extends StatelessWidget {
   final bool isFullScreen;
   final Color? backgroundColor;
   final Widget? bottomNavigationBar;
+  final Widget? floatingActionButton;
 
   const ScaffoldApp({
     super.key,
@@ -15,6 +16,7 @@ class ScaffoldApp extends StatelessWidget {
     this.isFullScreen = false,
     this.backgroundColor,
     this.bottomNavigationBar,
+    this.floatingActionButton,
   });
 
   void _sytemUIOverlay() {
@@ -41,6 +43,7 @@ class ScaffoldApp extends StatelessWidget {
       backgroundColor: backgroundColor,
       appBar: appBar,
       body: body,
+      floatingActionButton: floatingActionButton,
       bottomNavigationBar: bottomNavigationBar,
     );
   }

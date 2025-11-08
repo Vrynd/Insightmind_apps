@@ -75,9 +75,8 @@ class ResultSummary extends StatelessWidget {
                 Text(
                   '$score',
                   style: textStyle.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
                     fontSize: 25,
-                    height: 1.2,
+                    height: 1.1,
                     color: color.onSurfaceVariant,
                   ),
                 ),
@@ -123,9 +122,8 @@ class ResultSummary extends StatelessWidget {
                 Text(
                   riskLevel,
                   style: textStyle.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
                     fontSize: 25,
-                    height: 1.2,
+                    height: 1.1,
                     color: color.onSurfaceVariant,
                   ),
                 ),
