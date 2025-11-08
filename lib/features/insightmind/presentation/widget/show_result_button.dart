@@ -7,6 +7,7 @@ class ShowResultButton extends ConsumerWidget {
   final bool isComplete;
   final ColorScheme color;
   final TextTheme textStyle;
+  final String titleAction;
   final dynamic questionnaireState;
 
   const ShowResultButton({
@@ -14,6 +15,7 @@ class ShowResultButton extends ConsumerWidget {
     required this.isComplete,
     required this.color,
     required this.textStyle,
+    required this.titleAction,
     required this.questionnaireState,
   });
 
@@ -52,9 +54,10 @@ class ShowResultButton extends ConsumerWidget {
               }
             : null,
         child: Text(
-          'Lihat Hasil',
+          titleAction,
           style: textStyle.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
+            height: 1.2,
             color: isComplete ? color.onPrimary : color.outlineVariant,
           ),
         ),

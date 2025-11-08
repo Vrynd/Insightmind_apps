@@ -7,6 +7,7 @@ import 'package:insightmind_app/features/insightmind/presentation/widget/reset_p
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/questionaire.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/show_result_button.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/title_page.dart';
 
 class ScreeningScreen extends ConsumerStatefulWidget {
   const ScreeningScreen({super.key});
@@ -59,13 +60,15 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
       backgroundColor: color.surface,
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        backgroundColor: _isScrolling ? color.surfaceContainerLowest : color.surface,
+        backgroundColor: _isScrolling
+            ? color.surfaceContainerLowest
+            : color.surface,
         centerTitle: true,
         title: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
           opacity: _isScrolling ? 1.0 : 0.0,
           child: Text(
-            'Kuesioner',
+            'Kuisioner Skrining',
             style: textStyle.titleMedium?.copyWith(
               color: color.onSurfaceVariant,
               fontWeight: FontWeight.w600,
@@ -74,9 +77,7 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
             ),
           ),
         ),
-        leading: BackButton(
-          color: color.onSurfaceVariant,
-        ),
+        leading: BackButton(color: color.onSurfaceVariant),
       ),
       body: ScrollConfiguration(
         behavior: const ScrollBehavior().copyWith(
@@ -87,24 +88,22 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
           controller: _scrollController,
           padding: EdgeInsets.only(top: 0, left: 20, right: 20, bottom: 30),
           children: [
-            Text(
-              'Kuesioner',
-              style: textStyle.headlineMedium?.copyWith(
-                color: color.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-                height: 1.1
-              ),
+            TitlePage(
+              textStyle: textStyle,
+              color: color,
+              title: 'Kuisioner Skrining',
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 14),
 
             IndicatorProggres(
+              title: 'Progres Anda',
               progressValue: progressValue,
               answeredCount: answeredCount,
               totalCount: totalCount,
               color: color,
               textStyle: textStyle,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
 
             for (int i = 0; i < questions.length; i++) ...[
               Questionnaire(
@@ -146,7 +145,18 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(message),
+                          backgroundColor: color.errorContainer,
+                          content: Text(
+                            message,
+                            style: textStyle.bodyMedium?.copyWith(
+                              color: color.error,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                              height: 1.3,
+                            ),
+                          ),
+                          showCloseIcon: true,
+                          closeIconColor: color.error,
                           behavior: SnackBarBehavior.floating,
                           duration: const Duration(seconds: 1),
                         ),
@@ -155,11 +165,12 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
                   }
                 },
               ),
-              if (i != questions.length - 1) const SizedBox(height: 16),
+              if (i != questions.length - 1) const SizedBox(height: 14),
             ],
 
             if (answeredCount > 0)
               AnswerSummary(
+                title: 'Ringkasan Jawaban',
                 answeredScores: answeredScores,
                 questions: questions,
                 totalScore: totalScore,
@@ -176,13 +187,19 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ShowResultButton(
+              titleAction: 'Lihat Hasil',
               isComplete: isComplete,
               color: color,
               textStyle: textStyle,
               questionnaireState: questionnaireState,
             ),
             const SizedBox(width: 10),
-            ResetProgressButton(color: color, textStyle: textStyle),
+            ResetProgressButton(
+              mainTitle: 'Reset Progres',
+              subTitle: 'Apakah anda ingin menghapus progres anda?',
+              color: color,
+              textStyle: textStyle,
+            ),
           ],
         ),
       ),

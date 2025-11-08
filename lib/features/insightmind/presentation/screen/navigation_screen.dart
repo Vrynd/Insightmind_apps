@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:insightmind_app/features/insightmind/presentation/screen/history_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/home_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/setting_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
@@ -23,8 +22,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
     return ScaffoldApp(
       body: switch (selectedIndex) {
         0 => const HomeScreen(),
-        1 => const HistoryScreen(),
-        2 => const SettingScreen(),
+        1 => const SettingScreen(),
         _ => const HomeScreen(),
       },
       bottomNavigationBar: SalomonBottomBar(
@@ -41,19 +39,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
             icon: const Icon(Icons.explore_outlined, size: 28),
             title: Text(
               "Beranda",
-              style: textStyle.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                height: 1.4,
-                color: color.onSurfaceVariant,
-              ),
-            ),
-            selectedColor: Theme.of(context).colorScheme.primary,
-            unselectedColor: Theme.of(context).colorScheme.secondary,
-          ),
-          SalomonBottomBarItem(
-            icon: const Icon(Icons.history_outlined, size: 28),
-            title: Text(
-              "Riwayat",
               style: textStyle.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w600,
                 height: 1.4,

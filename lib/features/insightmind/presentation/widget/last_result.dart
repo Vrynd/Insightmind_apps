@@ -57,7 +57,6 @@ class LastResult extends StatelessWidget {
               style: textStyle.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w500,
                 height: 1.3,
-                fontSize: 15,
                 color: color.onSurfaceVariant,
               ),
             ),
@@ -66,7 +65,7 @@ class LastResult extends StatelessWidget {
               style: textStyle.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w600,
                 height: 1.3,
-                fontSize: 17,
+                fontSize: 17.5,
                 color: color.secondary,
               ),
             ),
@@ -89,7 +88,6 @@ class LastResult extends StatelessWidget {
               style: textStyle.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w500,
                 height: 1.3,
-                fontSize: 15,
                 color: color.onSurfaceVariant,
               ),
             ),
@@ -98,7 +96,7 @@ class LastResult extends StatelessWidget {
               style: textStyle.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w600,
                 height: 1.3,
-                fontSize: 17,
+                fontSize: 17.5,
                 color: color.secondary,
               ),
             ),

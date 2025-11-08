@@ -4,6 +4,7 @@ class IndicatorProggres extends StatelessWidget {
   final double progressValue;
   final int answeredCount;
   final int totalCount;
+  final String title;
   final ColorScheme color;
   final TextTheme textStyle;
 
@@ -13,6 +14,7 @@ class IndicatorProggres extends StatelessWidget {
     required this.answeredCount,
     required this.totalCount,
     required this.color,
+    required this.title,
     required this.textStyle,
   });
 
@@ -31,7 +33,7 @@ class IndicatorProggres extends StatelessWidget {
         children: [
           // Judul Progres
           Text(
-            'Progres Anda',
+            title,
             style: textStyle.titleMedium?.copyWith(
               color: color.outline.withValues(alpha: 0.8),
               fontWeight: FontWeight.w600,
@@ -57,7 +59,7 @@ class IndicatorProggres extends StatelessWidget {
                   style: textStyle.titleLarge?.copyWith(
                     color: color.primary,
                     height: 1.2,
-                    fontSize: 25,
+                    fontSize: 26,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -105,6 +107,7 @@ class IndicatorProggres extends StatelessWidget {
                     color: color.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                     height: 1.3,
+                    fontSize: 17
                   ),
                 ),
               ],

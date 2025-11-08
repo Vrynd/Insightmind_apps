@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:insightmind_app/features/insightmind/presentation/screen/history_screen.dart';
+import 'package:insightmind_app/features/insightmind/presentation/screen/result_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/screening_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/banner_app.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/empty_history.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/history_item.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/last_result.dart';
-import 'package:insightmind_app/features/insightmind/presentation/widget/mood_selector.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/start_screening.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/title_action.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/title_page.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -16,6 +22,8 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isScrolling = false;
+
+  final List<Map<String, dynamic>> historyData = [];
 
   @override
   void initState() {
@@ -89,84 +97,95 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             bottom: 30,
           ),
           children: [
-            Text(
-              'Beranda ',
-              style: textStyle.headlineMedium?.copyWith(
-                color: color.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-                height: 1.1,
-              ),
+            TitlePage(
+              textStyle: textStyle,
+              color: color,
+              title: 'Selamat Datang',
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
 
             BannerApp(imagePath: 'assets/image/banner_mental_health.png'),
-            const SizedBox(height: 12),
-
-            MoodSelector(title: 'Bagaimana harimu hari ini?'),
-            const SizedBox(height: 30),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Kondisi Terakhir',
-                      style: textStyle.titleLarge?.copyWith(
-                        color: color.onSurfaceVariant,
-                        height: 1.1,
-                        fontSize: 23,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Rabu, 05 November 2025',
-                      style: textStyle.titleSmall?.copyWith(
-                        color: color.outline.withValues(alpha: 0.8),
-                        fontSize: 16,
-                        height: 1.3,
-                      ),
-                    ),
-                  ],
-                ),
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: color.primary,
-                    minimumSize: const Size(0, 36),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 6,
-                    ),
+            const SizedBox(height: 14),
+            StartScreening(
+              color: color,
+              textStyle: textStyle,
+              mainTitle: 'Mulai Skrining',
+              subTitle:
+                  'Yuk, cek kesehatan mental anda dan dapatkan insight baru!',
+              imagePath: 'assets/image/mindset.png',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const ScreeningScreen(),
                   ),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const ScreeningScreen(),
-                      ),
-                    );
-                  },
-                  label: Icon(
-                    Icons.arrow_forward_rounded,
-                    color: color.onPrimary,
-                    size: 26,
-                  ),
-                ),
-              ],
+                );
+              },
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 24),
 
+            TitleAction(
+              textStyle: textStyle,
+              color: color,
+              mainTitle: 'Kondisi Terakhir',
+              subTitle: 'Sabtu, 8 November 2025',
+              iconAction: Icons.arrow_forward,
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const ResultScreen()),
+                );
+              },
+            ),
+            const SizedBox(height: 14),
             LastResult(
               totalScore: 0,
-              riskLevel: 'Tidak Ada',
+              riskLevel: 'Tidak Diketahui',
               color: color,
               textStyle: textStyle,
             ),
+            const SizedBox(height: 24),
+
+            TitleAction(
+              textStyle: textStyle,
+              color: color,
+              mainTitle: 'Riwayat Skrining',
+              iconAction: Icons.arrow_forward,
+              actionType: ActionType.text,
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const HistoryScreen(),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 14),
+            if (historyData.isEmpty)
+              EmptyHistory(
+                color: color,
+                textStyle: textStyle,
+                imagePath: 'assets/image/empty_box.png',
+                mainTitle: 'Belum Ada Riwayat',
+                subTitle:
+                    'Mulai skrining pertama anda untuk melihat riwayat hasil di sini.',
+              )
+            else
+              Column(
+                children: historyData.map((item) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: HistoryItem(
+                      color: color,
+                      textStyle: textStyle,
+                      month: item['month'],
+                      day: item['day'],
+                      mainTitle: item['mainTitle'],
+                      subTitle: item['subTitle'],
+                      percent: item['percent'],
+                      score: item['score'],
+                    ),
+                  );
+                }).toList(),
+              ),
           ],
         ),
       ),

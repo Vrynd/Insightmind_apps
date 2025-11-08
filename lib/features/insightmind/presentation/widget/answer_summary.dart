@@ -6,6 +6,7 @@ class AnswerSummary extends StatefulWidget {
   final List<Question> questions;
   final int totalScore;
   final bool isComplete;
+  final String title;
   final ColorScheme color;
   final TextTheme textStyle;
 
@@ -16,6 +17,7 @@ class AnswerSummary extends StatefulWidget {
     required this.totalScore,
     required this.isComplete,
     required this.color,
+    required this.title,
     required this.textStyle,
   });
 
@@ -80,7 +82,7 @@ class _AnswerSummaryState extends State<AnswerSummary> {
             children: [
               // Judul Ringkasan Jawaban
               Text(
-                'Ringkasan Jawaban',
+                widget.title,
                 style: widget.textStyle.titleMedium?.copyWith(
                   color: widget.color.outline.withValues(alpha: 0.8),
                   fontWeight: FontWeight.w600,

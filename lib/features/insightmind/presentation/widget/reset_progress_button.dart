@@ -5,11 +5,15 @@ import 'package:insightmind_app/features/insightmind/presentation/providers/ques
 class ResetProgressButton extends ConsumerWidget {
   final ColorScheme color;
   final TextTheme textStyle;
+  final String mainTitle;
+  final String subTitle;
 
   const ResetProgressButton({
     super.key,
     required this.color,
     required this.textStyle,
+    required this.mainTitle,
+    required this.subTitle,
   });
 
   void _showConfirmationSheet(BuildContext context, WidgetRef ref) {
@@ -33,16 +37,17 @@ class ResetProgressButton extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Reset Progress',
+                mainTitle,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: color.onSurface,
+                  color: color.onSurfaceVariant,
                   fontSize: 24,
+                  height: 1.1,
                 ),
               ),
 
               const SizedBox(height: 8),
               Text(
-                'Apakah anda yakin ingin memulihkan\nprogress?',
+                subTitle,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: color.outline,
                   fontSize: 18.8,
@@ -92,8 +97,19 @@ class ResetProgressButton extends ConsumerWidget {
                         ref.read(questionnaireProvider.notifier).reset();
                         Navigator.of(context).pop(true);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Progress anda berhasil dipulihkan'),
+                          SnackBar(
+                            backgroundColor: Colors.green.shade100,
+                            content: Text(
+                              'Progress anda berhasil dipulihkan',
+                              style: textStyle.bodyMedium?.copyWith(
+                                color: Colors.green.shade700,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                                height: 1.3,
+                              ),
+                            ),
+                            showCloseIcon: true,
+                            closeIconColor: Colors.green.shade700,
                             behavior: SnackBarBehavior.floating,
                             duration: Duration(seconds: 1),
                           ),
