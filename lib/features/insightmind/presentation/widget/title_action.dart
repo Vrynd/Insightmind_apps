@@ -87,12 +87,12 @@ class TitleAction extends StatelessWidget {
               ),
             ),
             if (subTitle != null && subTitle!.isNotEmpty) ...[
-              const SizedBox(height: 4),
+              const SizedBox(height: 5),
               Text(
                 subTitle!,
                 style: textStyle.titleSmall?.copyWith(
                   color: color.outline.withValues(alpha: 0.8),
-                  fontSize: 16,
+                  fontSize: 17,
                   height: 1.3,
                 ),
               ),

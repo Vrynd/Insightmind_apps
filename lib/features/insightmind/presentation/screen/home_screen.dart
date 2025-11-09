@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:insightmind_app/features/insightmind/domain/entities/date.dart';
+import 'package:insightmind_app/features/insightmind/presentation/providers/history_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/history_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/screening_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/banner_app.dart';
@@ -20,8 +22,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isScrolling = false;
-
-  final List<Map<String, dynamic>> historyData = [];
 
   @override
   void initState() {
@@ -46,10 +46,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
     final textStyle = Theme.of(context).textTheme;
+    final historyAsync = ref.watch(historyListProvider);
 
     return ScaffoldApp(
       backgroundColor: color.surface,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         centerTitle: true,
         scrolledUnderElevation: 0,
         backgroundColor: color.surface,
@@ -125,7 +127,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               textStyle: textStyle,
               color: color,
               mainTitle: 'Riwayat Skrining',
-              subTitle: 'Terakhir, 08 November 2025',
+              subTitle: historyAsync.when(
+                data: (records) => records.isNotEmpty
+                    ? 'Terakhir, ${records.first.timestamp.day} '
+                              '${monthName(records.first.timestamp.month)} '
+                              '${records.first.timestamp.year}'
+                          .toUpperCase()
+                    : 'Belum ada riwayat'.toUpperCase(),
+                loading: () => 'Memuat...',
+                error: (_, __) => 'Gagal memuat',
+              ),
               iconAction: Icons.arrow_forward,
               actionType: ActionType.elevated,
               onPressed: () {
@@ -137,33 +148,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               },
             ),
             const SizedBox(height: 14),
-            if (historyData.isEmpty)
-              EmptyHistory(
-                color: color,
-                textStyle: textStyle,
-                imagePath: 'assets/image/empty_box.png',
-                mainTitle: 'Belum Ada Riwayat',
-                subTitle:
-                    'Mulai skrining pertama anda untuk melihat\nriwayat hasil di sini',
-              )
-            else
-              Column(
-                children: historyData.map((item) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: HistoryItem(
-                      color: color,
-                      textStyle: textStyle,
-                      month: item['month'],
-                      day: item['day'],
-                      mainTitle: item['mainTitle'],
-                      subTitle: item['subTitle'],
-                      percent: item['percent'],
-                      score: item['score'],
-                    ),
+            historyAsync.when(
+              data: (items) {
+                if (items.isEmpty) {
+                  return EmptyHistory(
+                    color: color,
+                    textStyle: textStyle,
+                    imagePath: 'assets/image/empty_box.png',
+                    mainTitle: 'Belum Ada Riwayat',
+                    subTitle:
+                        'Mulai skrining pertama anda untuk melihat\nriwayat hasil di sini',
                   );
-                }).toList(),
-              ),
+                }
+
+                // Ambil maksimal 3 data terakhir
+                final latestRecords = items.take(4).toList();
+
+                return Column(
+                  children: latestRecords.map((r) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: HistoryItem(
+                        riskLevel: r.riskLevel,
+                        color: color,
+                        textStyle: textStyle,
+                        month: shortMonthName(r.timestamp.month),
+                        day: r.timestamp.day.toString(),
+                        mainTitle: 'Tingkat Depresi',
+                        subTitle: r.riskLevel,
+                        percent: r.score / 27,
+                        score: r.score,
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, st) => Center(child: Text('Gagal memuat riwayat: $e')),
+            ),
           ],
         ),
       ),

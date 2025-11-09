@@ -164,8 +164,10 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
               titleAction: 'Kembali Ke Beranda',
               onPressed: () {
                 ref.invalidate(questionnaireProvider);
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (_) => const NavigationScreen()),
+                  (Route<dynamic> route) =>
+                      false, // hapus semua route sebelumnya
                 );
               },
             ),

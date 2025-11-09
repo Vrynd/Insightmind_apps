@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:insightmind_app/features/insightmind/domain/entities/date.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/history_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/empty_history.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/history_item.dart';
@@ -20,8 +21,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isScrolling = false;
 
-  late final ColorScheme color;
-  late final TextTheme textStyle;
+  ColorScheme get color => Theme.of(context).colorScheme;
+  TextTheme get textStyle => Theme.of(context).textTheme;
 
   @override
   void initState() {
@@ -39,13 +40,6 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    color = Theme.of(context).colorScheme;
-    textStyle = Theme.of(context).textTheme;
   }
 
   Future<void> _confirmRemoveItem(
@@ -151,7 +145,6 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             ),
             const SizedBox(height: 12),
 
-            // ✅ Perbaiki agar dapat menampilkan data riwayat dari provider Hive
             historyAsync.when(
               data: (items) {
                 if (items.isEmpty) {
@@ -191,9 +184,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: HistoryItem(
+                          riskLevel: r.riskLevel,
                           color: color,
                           textStyle: textStyle,
-                          month: r.timestamp.month.toString(),
+                          month: shortMonthName(r.timestamp.month),
                           day: r.timestamp.day.toString(),
                           mainTitle: 'Tingkat Depresi',
                           subTitle: r.riskLevel,
@@ -212,7 +206,6 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
         ),
       ),
 
-      // ✅ Tombol hapus semua riwayat (pakai komponenmu sendiri)
       bottomNavigationBar: BottomAppBar(
         color: color.surfaceContainerLowest,
         child: Row(
