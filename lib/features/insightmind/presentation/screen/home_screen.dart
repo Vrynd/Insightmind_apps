@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/history_screen.dart';
-import 'package:insightmind_app/features/insightmind/presentation/screen/result_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/screening_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/banner_app.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/empty_history.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/history_item.dart';
-import 'package:insightmind_app/features/insightmind/presentation/widget/last_result.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/start_screening.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_action.dart';
@@ -126,30 +124,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             TitleAction(
               textStyle: textStyle,
               color: color,
-              mainTitle: 'Kondisi Terakhir',
-              subTitle: 'Sabtu, 8 November 2025',
-              iconAction: Icons.arrow_forward,
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const ResultScreen()),
-                );
-              },
-            ),
-            const SizedBox(height: 14),
-            LastResult(
-              totalScore: 0,
-              riskLevel: 'Tidak Diketahui',
-              color: color,
-              textStyle: textStyle,
-            ),
-            const SizedBox(height: 24),
-
-            TitleAction(
-              textStyle: textStyle,
-              color: color,
               mainTitle: 'Riwayat Skrining',
+              subTitle: 'Terakhir, 08 November 2025',
               iconAction: Icons.arrow_forward,
-              actionType: ActionType.text,
+              actionType: ActionType.elevated,
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -166,13 +144,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 imagePath: 'assets/image/empty_box.png',
                 mainTitle: 'Belum Ada Riwayat',
                 subTitle:
-                    'Mulai skrining pertama anda untuk melihat riwayat hasil di sini.',
+                    'Mulai skrining pertama anda untuk melihat\nriwayat hasil di sini',
               )
             else
               Column(
                 children: historyData.map((item) {
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 12.0),
+                    padding: const EdgeInsets.only(bottom: 10.0),
                     child: HistoryItem(
                       color: color,
                       textStyle: textStyle,

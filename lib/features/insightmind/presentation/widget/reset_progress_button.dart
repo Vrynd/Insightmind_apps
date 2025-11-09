@@ -151,19 +151,17 @@ class ResetProgressButton extends ConsumerWidget {
             if (states.contains(WidgetState.disabled)) {
               return color.surfaceContainerHigh.withValues(alpha: .8);
             }
-            return color.secondaryContainer;
-          }),
-          foregroundColor: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.disabled)) {
-              return color.outlineVariant.withValues(alpha: .9);
-            }
-            return color.secondary;
+            return color.errorContainer;
           }),
         ),
         onPressed: isAnyAnswered
             ? () => _showConfirmationSheet(context, ref)
             : null,
-        child: Icon(Icons.refresh_outlined, size: 30),
+        child: Icon(
+          Icons.refresh_outlined,
+          size: 30,
+          color: isAnyAnswered ? color.error : color.outlineVariant,
+        ),
       ),
     );
   }

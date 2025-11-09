@@ -3,7 +3,7 @@ import 'package:uuid/uuid.dart';
 import 'screening_record.dart';
 
 class HistoryRepository {
-  static const String boxName = 'screening_record';
+  static const String boxName = 'screening_records';
 
   // Buka box jika belum terbuka (lazy-open)
   Future<Box<ScreeningRecord>> _openBox() async {
