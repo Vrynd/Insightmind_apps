@@ -10,6 +10,8 @@ class HistoryItem extends StatelessWidget {
   final String subTitle;
   final double percent;
   final int score;
+  final String riskLevel;
+  final VoidCallback? onTap;
 
   const HistoryItem({
     super.key,
@@ -21,11 +23,33 @@ class HistoryItem extends StatelessWidget {
     required this.subTitle,
     required this.percent,
     required this.score,
+    required this.riskLevel,
+    this.onTap,
   });
+
+  Color _getRiskColor(String level, ColorScheme color) {
+    switch (level.toLowerCase()) {
+      case 'minimal':
+        return Colors.green;
+      case 'ringan':
+        return Colors.lightGreen;
+      case 'sedang':
+        return Colors.orange;
+      case 'cukup berat':
+        return Colors.deepOrange;
+      case 'berat':
+        return Colors.red;
+      default:
+        return color.primary;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final riskColor = _getRiskColor(riskLevel, color);
+
     return ListTile(
+      onTap: onTap,
       tileColor: color.surfaceContainerLowest,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -82,19 +106,21 @@ class HistoryItem extends StatelessWidget {
         ),
       ),
       trailing: CircularPercentIndicator(
-        radius: 24.0,
-        lineWidth: 6.0,
+        radius: 26.0,
+        lineWidth: 8.0,
         percent: percent,
         animation: true,
         animationDuration: 700,
         circularStrokeCap: CircularStrokeCap.round,
         backgroundColor: color.surfaceContainerHighest,
-        progressColor: color.primaryContainer,
+        progressColor: riskColor,
         center: Text(
           '$score',
-          style: textStyle.bodyMedium?.copyWith(
+          style: textStyle.bodyLarge?.copyWith(
             color: color.onSurfaceVariant,
             fontWeight: FontWeight.w600,
+            height: 1.3,
+            fontSize: 17,
           ),
         ),
       ),

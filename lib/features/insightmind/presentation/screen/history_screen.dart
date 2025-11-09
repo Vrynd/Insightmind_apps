@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:insightmind_app/features/insightmind/domain/entities/date.dart';
+import 'package:insightmind_app/features/insightmind/presentation/providers/history_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/empty_history.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/history_item.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/remove_all_history_button.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_page.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/remove_confirmation.dart';
+import 'package:insightmind_app/features/insightmind/data/local/screening_record.dart';
 
 class HistoryScreen extends ConsumerStatefulWidget {
   const HistoryScreen({super.key});
@@ -16,10 +21,12 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isScrolling = false;
 
+  ColorScheme get color => Theme.of(context).colorScheme;
+  TextTheme get textStyle => Theme.of(context).textTheme;
+
   @override
   void initState() {
     super.initState();
-
     _scrollController.addListener(() {
       if (_scrollController.offset > 0 && !_isScrolling) {
         setState(() => _isScrolling = true);
@@ -35,27 +42,68 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     super.dispose();
   }
 
-  Color _getRiskColor(String level, ColorScheme color) {
-    switch (level.toLowerCase()) {
-      case 'minimal':
-        return Colors.green;
-      case 'ringan':
-        return Colors.lightGreen;
-      case 'sedang':
-        return Colors.orange;
-      case 'cukup berat':
-        return Colors.deepOrange;
-      case 'berat':
-        return Colors.red;
-      default:
-        return color.primary;
+  Future<void> _confirmRemoveItem(
+    BuildContext context,
+    ScreeningRecord record,
+  ) async {
+    final bool? confirmed = await showModalBottomSheet<bool>(
+      showDragHandle: true,
+      context: context,
+      backgroundColor: color.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return RemoveConfirmation(
+          title: "Hapus Riwayat?",
+          description:
+              "Apakah kamu yakin ingin menghapus riwayat ini? Tindakan ini tidak dapat dibatalkan.",
+          color: color,
+          textStyle: textStyle,
+          onConfirm: () {
+            Navigator.of(context).pop(true);
+          },
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      await ref.read(historyRepositoryProvider).deleteById(record.id);
+      final _ = ref.refresh(historyListProvider);
+    }
+  }
+
+  Future<void> _confirmRemoveAll(BuildContext context) async {
+    final bool? confirmed = await showModalBottomSheet<bool>(
+      context: context,
+      showDragHandle: true,
+      backgroundColor: color.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return RemoveConfirmation(
+          title: "Hapus Semua Riwayat?",
+          description:
+              "Semua data riwayat akan dihapus dan tidak dapat dikembalikan.",
+          color: color,
+          textStyle: textStyle,
+          onConfirm: () {
+            Navigator.of(context).pop(true);
+          },
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      await ref.read(historyRepositoryProvider).clearAll();
+      final _ = ref.refresh(historyListProvider);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme;
-    final textStyle = Theme.of(context).textTheme;
+    final historyAsync = ref.watch(historyListProvider);
 
     return ScaffoldApp(
       backgroundColor: color.surface,
@@ -80,10 +128,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
         ),
       ),
       body: ScrollConfiguration(
-        behavior: const ScrollBehavior().copyWith(
-          overscroll: false,
-          physics: const BouncingScrollPhysics(),
-        ),
+        behavior: const ScrollBehavior().copyWith(overscroll: false),
         child: ListView(
           controller: _scrollController,
           padding: const EdgeInsets.only(
@@ -100,94 +145,80 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             ),
             const SizedBox(height: 12),
 
-            EmptyHistory(
+            historyAsync.when(
+              data: (items) {
+                if (items.isEmpty) {
+                  return EmptyHistory(
+                    color: color,
+                    textStyle: textStyle,
+                    imagePath: 'assets/image/empty_box.png',
+                    mainTitle: 'Belum Ada Riwayat',
+                    subTitle:
+                        'Mulai skrining pertama anda untuk melihat\nriwayat hasil di sini',
+                  );
+                }
+
+                return Column(
+                  children: items.map((r) {
+                    return Dismissible(
+                      key: Key(r.id),
+                      direction: DismissDirection.startToEnd,
+                      confirmDismiss: (_) async {
+                        await _confirmRemoveItem(context, r);
+                        return false;
+                      },
+                      background: Container(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          color: color.errorContainer,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Icon(
+                          Icons.delete_outline,
+                          color: color.error,
+                          size: 28,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: HistoryItem(
+                          riskLevel: r.riskLevel,
+                          color: color,
+                          textStyle: textStyle,
+                          month: shortMonthName(r.timestamp.month),
+                          day: r.timestamp.day.toString(),
+                          mainTitle: 'Tingkat Depresi',
+                          subTitle: r.riskLevel,
+                          percent: r.score / 27,
+                          score: r.score,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(child: Text('Error: $e')),
+            ),
+          ],
+        ),
+      ),
+
+      bottomNavigationBar: BottomAppBar(
+        color: color.surfaceContainerLowest,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            RemoveAllHistoryButton(
+              titleAction: 'Hapus Semua Riwayat',
               color: color,
               textStyle: textStyle,
-              imagePath: 'assets/image/empty_box.png',
-              mainTitle: 'Belum Ada Riwayat',
-              subTitle:
-                  'Lakukan skrining pertama Anda untuk\nmelihat hasil di sini',
+              onPressed: () => _confirmRemoveAll(context),
+              isDisabled: historyAsync.value?.isEmpty ?? true,
             ),
-
-            ListTile(
-              tileColor: color.surfaceContainerLowest,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 8,
-                horizontal: 16,
-              ),
-              leading: Container(
-                width: 55,
-                height: 64,
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: color.surfaceContainer,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Nov'.toUpperCase(),
-                      style: textStyle.bodyLarge?.copyWith(
-                        color: color.outline.withValues(alpha: 0.7),
-                        fontWeight: FontWeight.w600,
-                        height: 1.3,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '8',
-                      style: textStyle.titleMedium?.copyWith(
-                        color: color.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                        height: 1.2,
-                        fontSize: 18.8,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              title: Text(
-                'Level Depressi',
-                style: textStyle.bodyLarge?.copyWith(
-                  fontSize: 17,
-                  color: color.outline.withValues(alpha: 0.7),
-                  height: 1.3,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              subtitle: Padding(
-                padding: const EdgeInsets.only(top: 4.0),
-                child: Text(
-                  'Berat',
-                  style: textStyle.titleLarge?.copyWith(
-                    height: 1.1,
-                    color: color.onSurfaceVariant,
-                  ),
-                ),
-              ),
-              trailing: CircularPercentIndicator(
-                radius: 24.0,
-                lineWidth: 6.0,
-                percent: 0.75,
-                animation: true,
-                animationDuration: 700,
-                circularStrokeCap: CircularStrokeCap.round,
-                backgroundColor: color.surfaceContainerHighest,
-                progressColor: _getRiskColor('sedang', color),
-                center: Text(
-                  '40',
-                  style: textStyle.bodyMedium?.copyWith(
-                    color: color.onSurfaceVariant,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
+            const SizedBox.shrink(),
           ],
         ),
       ),

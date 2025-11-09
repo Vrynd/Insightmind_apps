@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:insightmind_app/features/insightmind/domain/entities/recomendation.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/history_provider.dart';
+import 'package:insightmind_app/features/insightmind/presentation/providers/questionnare_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/score_provider.dart';
+import 'package:insightmind_app/features/insightmind/presentation/screen/navigation_screen.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/button_action.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/recomendation.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/result_summary.dart';
-import 'package:insightmind_app/features/insightmind/presentation/widget/save_result_button.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 
 class ResultScreen extends ConsumerStatefulWidget {
@@ -23,11 +26,24 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
   void initState() {
     super.initState();
 
+    // Menambahkan listener untuk mendeteksi scroll
     _scrollController.addListener(() {
       if (_scrollController.offset > 0 && !_isScrolling) {
         setState(() => _isScrolling = true);
       } else if (_scrollController.offset <= 0 && _isScrolling) {
         setState(() => _isScrolling = false);
+      }
+    });
+
+    // Jalankan auto save untuk menyimpan ke riwayat skrining
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!_saved) {
+        final result = ref.read(resultProvider);
+        final repo = ref.read(historyRepositoryProvider);
+
+        await repo.addRecord(score: result.score, riskLevel: result.riskLevel);
+        final _ = ref.refresh(historyListProvider);
+        _saved = true;
       }
     });
   }
@@ -38,88 +54,12 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
     super.dispose();
   }
 
-  // Fungsi untuk menyimpan hasil
-  Future<void> _saveResult() async {
-    if (_saved) return;
-    final result = ref.read(resultProvider);
-    await ref
-        .read(historyRepositoryProvider)
-        .addRecord(score: result.score, riskLevel: result.riskLevel);
-
-    setState(() => _saved = true);
-
-    // Menampilkan informasi
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Hasil berhasil disimpan!'),
-        behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 1),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
     final textStyle = Theme.of(context).textTheme;
     final result = ref.watch(resultProvider);
-
-    List<String> recommendation;
-    switch (result.riskLevel.toLowerCase()) {
-      case 'minimal':
-        recommendation = [
-          'Pertahankan rutinitas positif seperti olahraga dan tidur cukup.',
-          'Teruskan menjaga keseimbangan antara aktivitas dan waktu istirahat.',
-          'Luangkan waktu untuk kegiatan yang menyenangkan dan menenangkan.',
-          'Tetap jaga interaksi sosial agar suasana hati stabil.',
-        ];
-        break;
-
-      case 'ringan':
-        recommendation = [
-          'Mulailah mengenali sumber stres ringan yang mungkin kamu alami.',
-          'Lakukan aktivitas relaksasi seperti meditasi, jalan santai, atau journaling.',
-          'Tetap jaga pola makan dan tidur yang teratur.',
-          'Bicarakan perasaanmu dengan orang terdekat untuk meringankan beban emosional.',
-        ];
-        break;
-
-      case 'sedang':
-        recommendation = [
-          'Lakukan aktivitas relaksasi seperti napas dalam, yoga atau meditasi.',
-          'Atur waktu antara kuliah/kerja dan istirahat dengan lebih seimbang.',
-          'Luangkan waktu untuk melakukan kegiatan yang kamu nikmati.',
-          'Pertimbangkan berbicara dengan konselor jika merasa stres sering muncul.',
-        ];
-        break;
-
-      case 'cukup berat':
-        recommendation = [
-          'Disarankan berkonsultasi dengan konselor atau psikolog profesional.',
-          'Kurangi tekanan aktivitas yang berlebihan agar tidak kelelahan mental.',
-          'Fokus pada pemulihan dengan tidur cukup dan pola makan bergizi.',
-          'Carilah dukungan emosional dari teman, keluarga, atau layanan kampus.',
-        ];
-        break;
-
-      case 'berat':
-        recommendation = [
-          'Segera hubungi tenaga profesional seperti psikolog atau psikiater.',
-          'Jangan menghadapi tekanan sendirian, libatkan orang terdekat.',
-          'Batasi aktivitas berat dan berikan waktu untuk pemulihan mental.',
-          'Gunakan layanan konseling kampus atau hotline kesehatan mental bila diperlukan.',
-        ];
-        break;
-
-      default:
-        recommendation = [
-          'Pertahankan rutinitas positif seperti tidur teratur dan olahraga ringan.',
-          'Jaga pola makan seimbang dan waktu istirahat cukup.',
-          'Terus berinteraksi dengan lingkungan sosial yang positif.',
-          'Lakukan kegiatan yang meningkatkan suasana hati secara konsisten.',
-        ];
-        break;
-    }
+    final recommendation = Recommendation.getRecommendations(result.riskLevel);
 
     return ScaffoldApp(
       backgroundColor: color.surface,
@@ -133,7 +73,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
           duration: const Duration(milliseconds: 300),
           opacity: _isScrolling ? 1.0 : 0.0,
           child: Text(
-            'Hasil',
+            'Hasil Skrining',
             style: textStyle.titleMedium?.copyWith(
               color: color.onSurfaceVariant,
               fontWeight: FontWeight.w600,
@@ -144,6 +84,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
         ),
       ),
 
+      // Body
       body: SafeArea(
         child: ListView(
           controller: _scrollController,
@@ -155,54 +96,80 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
           ),
           children: [
             Text(
-              'Hasil',
+              'Hasil Skrining',
               style: textStyle.headlineMedium?.copyWith(
                 color: color.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
                 height: 1.1,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
 
-            // Ringkasan Hasil
+            // Ringkasan hasil
             ResultSummary(
               score: result.score,
               riskLevel: result.riskLevel,
               color: color,
               textStyle: textStyle,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
 
-            // Rekomendasi sesuai hasil
+            // Rekomendasi
             Recomendation(
               color: color,
               textStyle: textStyle,
               recommendation: recommendation,
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 24),
 
+            // Info auto save
             Center(
-              child: Text(
-                'Disclaimer: InsightMind bersifat edukatif, bukan alat diagnosis medis',
-                style: textStyle.bodyMedium?.copyWith(
-                  color: color.outline,
-                  fontStyle: FontStyle.italic,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.check_circle_outline,
+                    color: color.primary,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Hasil skrining telah disimpan di riwayat skrining',
+                      style: textStyle.bodyLarge?.copyWith(
+                        color: color.outline,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        fontSize: 17,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
       ),
+
+      // Tombol bawah
       bottomNavigationBar: BottomAppBar(
         color: color.surfaceContainerLowest,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SaveResultButton(
+            ButtonAction(
               color: color,
               textStyle: textStyle,
-              saved: _saved,
-              onPressed: _saveResult,
+              titleAction: 'Kembali Ke Beranda',
+              onPressed: () {
+                ref.invalidate(questionnaireProvider);
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const NavigationScreen()),
+                  (Route<dynamic> route) =>
+                      false, // hapus semua route sebelumnya
+                );
+              },
             ),
             const SizedBox.shrink(),
           ],
