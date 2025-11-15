@@ -70,14 +70,13 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
           child: Text(
             'Kuisioner Skrining',
             style: textStyle.titleMedium?.copyWith(
-              color: color.onSurfaceVariant,
+              color: color.onSurface,
               fontWeight: FontWeight.w600,
-              fontSize: 19,
               height: 1.2,
             ),
           ),
         ),
-        leading: BackButton(color: color.onSurfaceVariant),
+        leading: BackButton(color: color.onSurface),
       ),
       body: ScrollConfiguration(
         behavior: const ScrollBehavior().copyWith(
@@ -113,56 +112,10 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
                 textStyle: textStyle,
                 selectedScore: questionnaireState.answers[questions[i].id],
                 onChanged: (score) {
-                  final isAnswered = questionnaireState.answers.containsKey(
-                    questions[i].id,
+                  questionnaireNotifier.selectAnswer(
+                    questionId: questions[i].id,
+                    score: score,
                   );
-
-                  if (isAnswered) {
-                    questionnaireNotifier.selectAnswer(
-                      questionId: questions[i].id,
-                      score: score,
-                    );
-                  } else {
-                    final canAnswer =
-                        i == 0 ||
-                        List.generate(i, (index) => questions[index].id).every(
-                          (id) => questionnaireState.answers.containsKey(id),
-                        );
-
-                    if (canAnswer) {
-                      questionnaireNotifier.selectAnswer(
-                        questionId: questions[i].id,
-                        score: score,
-                      );
-                    } else {
-                      final firstUnansweredIndex = questions.indexWhere(
-                        (q) => !questionnaireState.answers.containsKey(q.id),
-                      );
-                      final questionNumber = firstUnansweredIndex + 1;
-                      final message = questionNumber == 1
-                          ? 'Silakan mulai dari pertanyaan pertama terlebih dahulu'
-                          : 'Silakan jawab pertanyaan nomor $questionNumber terlebih dahulu';
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: color.errorContainer,
-                          content: Text(
-                            message,
-                            style: textStyle.bodyMedium?.copyWith(
-                              color: color.error,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15,
-                              height: 1.3,
-                            ),
-                          ),
-                          showCloseIcon: true,
-                          closeIconColor: color.error,
-                          behavior: SnackBarBehavior.floating,
-                          duration: const Duration(seconds: 1),
-                        ),
-                      );
-                    }
-                  }
                 },
               ),
               if (i != questions.length - 1) const SizedBox(height: 14),

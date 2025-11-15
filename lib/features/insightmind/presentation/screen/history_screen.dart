@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:insightmind_app/features/insightmind/domain/entities/date.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/history_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/empty_history.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/history_item.dart';
@@ -160,40 +159,20 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
 
                 return Column(
                   children: items.map((r) {
-                    return Dismissible(
-                      key: Key(r.id),
-                      direction: DismissDirection.startToEnd,
-                      confirmDismiss: (_) async {
-                        await _confirmRemoveItem(context, r);
-                        return false;
-                      },
-                      background: Container(
-                        margin: const EdgeInsets.only(bottom: 8),
-                        decoration: BoxDecoration(
-                          color: color.errorContainer,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Icon(
-                          Icons.delete_outline,
-                          color: color.error,
-                          size: 28,
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: HistoryItem(
-                          riskLevel: r.riskLevel,
-                          color: color,
-                          textStyle: textStyle,
-                          month: shortMonthName(r.timestamp.month),
-                          day: r.timestamp.day.toString(),
-                          mainTitle: 'Tingkat Depresi',
-                          subTitle: r.riskLevel,
-                          percent: r.score / 27,
-                          score: r.score,
-                        ),
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: HistoryItem(
+                        riskLevel: r.riskLevel,
+                        color: color,
+                        textStyle: textStyle,
+                        mainTitle: 'Tingkat Depresi',
+                        subTitle: r.riskLevel,
+                        percent: r.score / 27,
+                        score: r.score,
+                        timestamp: r.timestamp,
+                        onDelete: () {
+                          _confirmRemoveItem(context, r);
+                        },
                       ),
                     );
                   }).toList(),

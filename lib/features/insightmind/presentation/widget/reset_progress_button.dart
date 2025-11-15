@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/questionnare_provider.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/confirmation_alert.dart';
 
 class ResetProgressButton extends ConsumerWidget {
   final ColorScheme color;
@@ -21,115 +22,43 @@ class ResetProgressButton extends ConsumerWidget {
       context: context,
       showDragHandle: true,
       useSafeArea: true,
+      backgroundColor: color.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.only(
-            top: 0,
-            left: 20,
-            right: 20,
-            bottom: 54,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                mainTitle,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: color.onSurfaceVariant,
-                  fontSize: 24,
-                  height: 1.1,
+      builder: (context) => ConfirmationAlert(
+        color: color,
+        textStyle: textStyle,
+        icon: Icons.refresh_outlined,
+        iconColor: color.error,
+        iconBackground: color.errorContainer,
+        title: mainTitle,
+        message: subTitle,
+        primaryAction: 'Ya, Pulihkan',
+        secondaryAction: 'Tidak',
+        onPrimaryPressed: () {
+          ref.read(questionnaireProvider.notifier).reset();
+          Navigator.of(context).pop(true);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.green.shade100,
+              content: Text(
+                'Progress anda berhasil dipulihkan',
+                style: textStyle.bodyMedium?.copyWith(
+                  color: Colors.green.shade700,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 15,
+                  height: 1.3,
                 ),
               ),
-
-              const SizedBox(height: 8),
-              Text(
-                subTitle,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: color.outline,
-                  fontSize: 18.8,
-                  height: 1.2,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: color.surfaceContainerHigh,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        minimumSize: const Size(double.infinity, 48),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop(false);
-                      },
-                      child: Text(
-                        'Tidak',
-                        style: textStyle.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: color.secondary,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade500,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        minimumSize: const Size(double.infinity, 48),
-                      ),
-                      onPressed: () {
-                        ref.read(questionnaireProvider.notifier).reset();
-                        Navigator.of(context).pop(true);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            backgroundColor: Colors.green.shade100,
-                            content: Text(
-                              'Progress anda berhasil dipulihkan',
-                              style: textStyle.bodyMedium?.copyWith(
-                                color: Colors.green.shade700,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 15,
-                                height: 1.3,
-                              ),
-                            ),
-                            showCloseIcon: true,
-                            closeIconColor: Colors.green.shade700,
-                            behavior: SnackBarBehavior.floating,
-                            duration: Duration(seconds: 1),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        'Ya, Pulihkan',
-                        style: textStyle.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: color.onError,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
+              showCloseIcon: true,
+              closeIconColor: Colors.green.shade700,
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 1),
+            ),
+          );
+        },
+      ),
     );
   }
 

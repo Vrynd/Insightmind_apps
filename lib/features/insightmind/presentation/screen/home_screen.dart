@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:insightmind_app/features/insightmind/domain/entities/date.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/history_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/history_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/screening_screen.dart';
@@ -11,6 +10,7 @@ import 'package:insightmind_app/features/insightmind/presentation/widget/scaffol
 import 'package:insightmind_app/features/insightmind/presentation/widget/start_screening.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_action.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_page.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -129,8 +129,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               mainTitle: 'Riwayat Skrining',
               subTitle: historyAsync.when(
                 data: (records) => records.isNotEmpty
-                    ? 'Terakhir, ${records.first.timestamp.day} '
-                              '${monthName(records.first.timestamp.month)} '
+                    ? 'Terakhir, '
+                              '${records.first.timestamp.day} '
+                              '${DateFormat('MMMM').format(records.first.timestamp)} '
                               '${records.first.timestamp.year}'
                           .toUpperCase()
                     : 'Belum ada riwayat'.toUpperCase(),
@@ -163,21 +164,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                 // Ambil maksimal 3 data terakhir
                 final latestRecords = items.take(4).toList();
-
                 return Column(
                   children: latestRecords.map((r) {
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
+                      padding: const EdgeInsets.only(bottom: 10.0),
                       child: HistoryItem(
                         riskLevel: r.riskLevel,
                         color: color,
                         textStyle: textStyle,
-                        month: shortMonthName(r.timestamp.month),
-                        day: r.timestamp.day.toString(),
                         mainTitle: 'Tingkat Depresi',
                         subTitle: r.riskLevel,
                         percent: r.score / 27,
                         score: r.score,
+                        timestamp: r.timestamp,
+                        showDeleteIcon: false,
                       ),
                     );
                   }).toList(),
