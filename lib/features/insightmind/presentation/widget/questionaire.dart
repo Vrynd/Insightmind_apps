@@ -25,7 +25,7 @@ class Questionnaire extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: color.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(16),
@@ -37,19 +37,12 @@ class Questionnaire extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '$index. ',
-                style: textStyle.titleMedium?.copyWith(
-                  color: color.onSurfaceVariant,
-                  height: 1.2,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
               Expanded(
                 child: Text(
-                  question.text,
+                  '$index. ${question.text}',
                   style: textStyle.titleMedium?.copyWith(
-                    color: color.onSurfaceVariant,
+                    color: color.onSurface,
+                    fontSize: 18.8,
                     height: 1.3,
                   ),
                 ),
@@ -58,10 +51,10 @@ class Questionnaire extends StatelessWidget {
 
               // Icon checklist jika sudah menjawab
               if (isAnswered)
-                Icon(Icons.check_circle, color: color.primary, size: 19),
+                Icon(Icons.check_circle, color: color.primary, size: 18.6),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
 
           // Opsi Jawaban
           Container(
@@ -69,7 +62,7 @@ class Questionnaire extends StatelessWidget {
               color: color.surfaceContainerHigh.withValues(alpha: .5),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: color.outlineVariant.withValues(alpha: 0.3),
+                color: color.surfaceContainerHigh.withValues(alpha: .8),
                 width: 1.2,
               ),
             ),
@@ -82,7 +75,7 @@ class Questionnaire extends StatelessWidget {
                     onTap: () => onChanged(question.options[i].score),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                        vertical: 1.5,
+                        vertical: 2.8,
                         horizontal: 0,
                       ),
                       child: Row(
@@ -111,8 +104,9 @@ class Questionnaire extends StatelessWidget {
                           Expanded(
                             child: Text(
                               question.options[i].label,
-                              style: textStyle.bodyLarge?.copyWith(
-                                fontSize: 17,
+                              style: textStyle.titleSmall?.copyWith(
+                                fontSize: 17.4,
+                                height: 1.3,
                                 color:
                                     question.options[i].score == selectedScore
                                     ? color.outline
@@ -133,8 +127,8 @@ class Questionnaire extends StatelessWidget {
                   if (i != question.options.length - 1)
                     Divider(
                       height: 0,
-                      thickness: 1,
-                      color: color.outlineVariant.withValues(alpha: 0.3),
+                      thickness: 1.2,
+                      color: color.surfaceContainerHigh.withValues(alpha: .8),
                     ),
                 ],
               ],

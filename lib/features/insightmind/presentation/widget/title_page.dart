@@ -17,9 +17,9 @@ class TitlePage extends StatelessWidget {
     return Text(
       title,
       style: textStyle.headlineMedium?.copyWith(
-        color: color.onSurfaceVariant,
+        color: color.onSurface,
         fontWeight: FontWeight.w600,
-        height: 1.1,
+        height: 1.2,
       ),
     );
   }

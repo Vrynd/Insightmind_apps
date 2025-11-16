@@ -22,7 +22,7 @@ class IndicatorProggres extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: color.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(16),
@@ -37,14 +37,14 @@ class IndicatorProggres extends StatelessWidget {
             style: textStyle.titleMedium?.copyWith(
               color: color.outline.withValues(alpha: 0.8),
               fontWeight: FontWeight.w600,
-              height: 1.2,
-              fontSize: 18.8,
+              height: 1.3,
+              fontSize: 20,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
 
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
             decoration: BoxDecoration(
               color: color.surfaceContainerHigh.withValues(alpha: .5),
               borderRadius: BorderRadius.circular(8),
@@ -70,9 +70,9 @@ class IndicatorProggres extends StatelessWidget {
                   child: Stack(
                     children: [
                       Container(
-                        height: 10,
+                        height: 14,
                         decoration: BoxDecoration(
-                          color: color.surfaceContainerHighest,
+                          color: color.primaryContainer,
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
@@ -80,7 +80,7 @@ class IndicatorProggres extends StatelessWidget {
                         builder: (context, constraints) {
                           return AnimatedContainer(
                             duration: const Duration(milliseconds: 500),
-                            height: 10,
+                            height: 14,
                             width:
                                 constraints.maxWidth *
                                 progressValue.clamp(0.0, 1.0),
@@ -98,16 +98,15 @@ class IndicatorProggres extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
 
                 // Jumlah pertanyaan yang dijawab
                 Text(
                   "$answeredCount dari $totalCount Pertanyaan",
-                  style: textStyle.bodyLarge?.copyWith(
-                    color: color.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
+                  style: textStyle.titleSmall?.copyWith(
+                    color: color.outline,
                     height: 1.3,
-                    fontSize: 17
+                    fontSize: 17.2,
                   ),
                 ),
               ],

@@ -52,7 +52,6 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
     final totalCount = questions.length;
     final progressValue = totalCount > 0 ? answeredCount / totalCount : 0.0;
 
-    final answeredScores = questionnaireState.answers.values.toList();
     final totalScore = questionnaireState.totalScore;
     final isComplete = questionnaireState.isComplete;
 
@@ -72,7 +71,8 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
             style: textStyle.titleMedium?.copyWith(
               color: color.onSurface,
               fontWeight: FontWeight.w600,
-              height: 1.2,
+              height: 1.3,
+              fontSize: 18.4,
             ),
           ),
         ),
@@ -85,7 +85,7 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
         ),
         child: ListView(
           controller: _scrollController,
-          padding: EdgeInsets.only(top: 0, left: 20, right: 20, bottom: 30),
+          padding: EdgeInsets.only(top: 0, left: 16, right: 16, bottom: 30),
           children: [
             TitlePage(
               textStyle: textStyle,
@@ -118,19 +118,21 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
                   );
                 },
               ),
-              if (i != questions.length - 1) const SizedBox(height: 14),
+              if (i != questions.length - 1) const SizedBox(height: 18),
             ],
 
-            if (answeredCount > 0)
+            if (answeredCount > 0) ...[
+              const SizedBox(height: 24),
               AnswerSummary(
-                title: 'Ringkasan Jawaban',
-                answeredScores: answeredScores,
+                answers: questionnaireState.answers,
                 questions: questions,
                 totalScore: totalScore,
                 isComplete: isComplete,
+                title: 'Ringkasan Jawaban',
                 color: color,
                 textStyle: textStyle,
               ),
+            ],
           ],
         ),
       ),
