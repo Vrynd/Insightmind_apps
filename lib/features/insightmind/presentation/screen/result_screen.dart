@@ -90,8 +90,8 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
           controller: _scrollController,
           padding: const EdgeInsets.only(
             top: 0,
-            left: 20,
-            right: 20,
+            left: 18,
+            right: 18,
             bottom: 30,
           ),
           children: [
@@ -162,6 +162,8 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
               color: color,
               textStyle: textStyle,
               titleAction: 'Kembali Ke Beranda',
+              buttonColor: color.primaryContainer,
+              titleActionColor: color.onPrimaryContainer,
               onPressed: () {
                 ref.invalidate(questionnaireProvider);
                 Navigator.of(context).pushAndRemoveUntil(

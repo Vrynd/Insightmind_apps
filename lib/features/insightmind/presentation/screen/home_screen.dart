@@ -92,8 +92,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           controller: _scrollController,
           padding: const EdgeInsets.only(
             top: 0,
-            left: 20,
-            right: 20,
+            left: 18,
+            right: 18,
             bottom: 30,
           ),
           children: [

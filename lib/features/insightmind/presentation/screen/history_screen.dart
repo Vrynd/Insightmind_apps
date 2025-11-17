@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/history_provider.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/button_action.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/empty_history.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/history_item.dart';
-import 'package:insightmind_app/features/insightmind/presentation/widget/remove_all_history_button.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_page.dart';
-import 'package:insightmind_app/features/insightmind/presentation/widget/remove_confirmation.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/alert_confirmation.dart';
 import 'package:insightmind_app/features/insightmind/data/local/screening_record.dart';
 
 class HistoryScreen extends ConsumerStatefulWidget {
@@ -45,25 +45,17 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     BuildContext context,
     ScreeningRecord record,
   ) async {
-    final bool? confirmed = await showModalBottomSheet<bool>(
-      showDragHandle: true,
+    final confirmed = await showConfirmationSheet(
       context: context,
-      backgroundColor: color.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) {
-        return RemoveConfirmation(
-          title: "Hapus Riwayat?",
-          description:
-              "Apakah kamu yakin ingin menghapus riwayat ini? Tindakan ini tidak dapat dibatalkan.",
-          color: color,
-          textStyle: textStyle,
-          onConfirm: () {
-            Navigator.of(context).pop(true);
-          },
-        );
-      },
+      color: color,
+      textStyle: textStyle,
+      icon: Icons.delete_outline_rounded,
+      iconColor: color.error,
+      title: "Hapus Riwayat?",
+      description:
+          "Apakah Anda yakin ingin menghapus riwayat ini? Tindakan ini tidak bisa dibatalkan.",
+      confirmTitle: "Ya, Hapus",
+      cancelTitle: "Batal",
     );
 
     if (confirmed == true) {
@@ -73,25 +65,17 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   }
 
   Future<void> _confirmRemoveAll(BuildContext context) async {
-    final bool? confirmed = await showModalBottomSheet<bool>(
+    final confirmed = await showConfirmationSheet(
       context: context,
-      showDragHandle: true,
-      backgroundColor: color.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) {
-        return RemoveConfirmation(
-          title: "Hapus Semua Riwayat?",
-          description:
-              "Semua data riwayat akan dihapus dan tidak dapat dikembalikan.",
-          color: color,
-          textStyle: textStyle,
-          onConfirm: () {
-            Navigator.of(context).pop(true);
-          },
-        );
-      },
+      color: color,
+      textStyle: textStyle,
+      icon: Icons.delete_outline_rounded,
+      iconColor: color.error,
+      title: "Hapus Semua Riwayat?",
+      description:
+          "Apakah Anda yakin ingin menghapus seluruh riwayat? Semua data akan hilang secara permanen.",
+      confirmTitle: "Ya, Hapus",
+      cancelTitle: "Batal",
     );
 
     if (confirmed == true) {
@@ -132,8 +116,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           controller: _scrollController,
           padding: const EdgeInsets.only(
             top: 0,
-            left: 20,
-            right: 20,
+            left: 18,
+            right: 18,
             bottom: 30,
           ),
           children: [
@@ -190,12 +174,14 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            RemoveAllHistoryButton(
-              titleAction: 'Hapus Semua Riwayat',
+            ButtonAction(
               color: color,
               textStyle: textStyle,
+              titleAction: 'Hapus Semua Riwayat',
+              buttonColor: color.errorContainer,
+              titleActionColor: color.error,
+              enabled: historyAsync.value?.isNotEmpty ?? false,
               onPressed: () => _confirmRemoveAll(context),
-              isDisabled: historyAsync.value?.isEmpty ?? true,
             ),
             const SizedBox.shrink(),
           ],
