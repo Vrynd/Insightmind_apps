@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class Recomendation extends StatefulWidget {
+  final String title;
   final ColorScheme color;
   final TextTheme textStyle;
   final List<String> recommendation;
 
   const Recomendation({
     super.key,
+    required this.title,
     required this.color,
     required this.textStyle,
     required this.recommendation,
@@ -19,23 +21,30 @@ class Recomendation extends StatefulWidget {
 }
 
 class _RecomendationState extends State<Recomendation> {
+  // State controller yang akan mengendalikan pageview
   final PageController _pageController = PageController();
   Timer? _autoScrollTimer;
-  int _currentPage = 0;
+  int _currentPage = 0; // akan menyimpan page yang aktif saat ini
 
+  // Inisialisasi state
   @override
   void initState() {
     super.initState();
+
+    // auto scroll akan dimulai ketika widget dibangun
     _startAutoScroll();
   }
 
+  // Fungsi untuk memulai auto scroll pada pageview
   void _startAutoScroll() {
     _autoScrollTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      // Jika belum sampai halaman terakhir, maka pindah page berikutnya, dan jika sudah sampai halaman terakhir, maka kembali ke halaman pertama
       if (_currentPage < widget.recommendation.length - 1) {
         _currentPage++;
       } else {
         _currentPage = 0;
       }
+
       _pageController.animateToPage(
         _currentPage,
         duration: const Duration(milliseconds: 600),
@@ -44,6 +53,7 @@ class _RecomendationState extends State<Recomendation> {
     });
   }
 
+  // Membebaskan timer dan page controller ketika widget dihapus, agar tidak terjadi memory leak
   @override
   void dispose() {
     _autoScrollTimer?.cancel();
@@ -65,24 +75,30 @@ class _RecomendationState extends State<Recomendation> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Widget untuk menampilkan judul dan icon
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(Icons.insights_outlined, color: color.tertiary, size: 22),
+              Icon(
+                Icons.insights_outlined,
+                color: Colors.amber.shade400,
+                size: 22,
+              ),
               const SizedBox(width: 12),
               Text(
-                'Rekomendasi',
+                widget.title,
                 style: textStyle.titleMedium?.copyWith(
                   color: color.outline.withValues(alpha: 0.8),
-                  height: 1.2,
-                  fontSize: 18.8,
                   fontWeight: FontWeight.w600,
+                  height: 1.3,
+                  fontSize: 20,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
 
+          // Widget untuk menampilkan daftar rekomendasi
           SizedBox(
             height: 100,
             child: PageView.builder(
@@ -106,11 +122,10 @@ class _RecomendationState extends State<Recomendation> {
                   child: Center(
                     child: Text(
                       rec,
-                      style: textStyle.bodyLarge?.copyWith(
+                      style: textStyle.titleSmall?.copyWith(
                         color: color.secondary,
                         height: 1.4,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 17,
+                        fontSize: 17.3,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -121,6 +136,7 @@ class _RecomendationState extends State<Recomendation> {
           ),
           const SizedBox(height: 14),
 
+          // Widget untuk menampilkan indikator page berupa dot
           Center(
             child: SmoothPageIndicator(
               controller: _pageController,

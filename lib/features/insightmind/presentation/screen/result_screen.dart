@@ -4,11 +4,15 @@ import 'package:insightmind_app/features/insightmind/domain/entities/recomendati
 import 'package:insightmind_app/features/insightmind/presentation/providers/history_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/questionnare_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/score_provider.dart';
+import 'package:insightmind_app/features/insightmind/presentation/screen/history_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/navigation_screen.dart';
-import 'package:insightmind_app/features/insightmind/presentation/widget/button_action.dart';
+import 'package:insightmind_app/features/insightmind/presentation/screen/screening_screen.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/quick_action.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/recomendation.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/result_summary.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/title_action.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/title_page.dart';
 
 class ResultScreen extends ConsumerStatefulWidget {
   const ResultScreen({super.key});
@@ -35,7 +39,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
       }
     });
 
-    // Jalankan auto save untuk menyimpan ke riwayat skrining
+    // Menjalankan listener setelah widget dibuat, untuk menyimpan riwayat secara otomatis
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!_saved) {
         final result = ref.read(resultProvider);
@@ -48,6 +52,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
     });
   }
 
+  // Membersihkan listener ketika widget dihapus, agar tidak terjadi memory leak
   @override
   void dispose() {
     _scrollController.dispose();
@@ -82,6 +87,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
             ),
           ),
         ),
+        automaticallyImplyLeading: false,
       ),
 
       // Body
@@ -95,86 +101,120 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
             bottom: 30,
           ),
           children: [
-            Text(
-              'Hasil Skrining',
-              style: textStyle.headlineMedium?.copyWith(
-                color: color.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-                height: 1.1,
-              ),
+            // Judul Halaman
+            TitlePage(
+              textStyle: textStyle,
+              color: color,
+              title: 'Hasil Skrining',
             ),
             const SizedBox(height: 14),
 
-            // Ringkasan hasil
+            // Widget untuk menampilkan hasil dari skrining yang dilakukan
             ResultSummary(
-              score: result.score,
               riskLevel: result.riskLevel,
               color: color,
               textStyle: textStyle,
+              item: [
+                SummaryItem(
+                  color: color,
+                  textStyle: textStyle,
+                  title: 'Total Skor',
+                  value: '${result.score}',
+                  icon: Icons.assessment_outlined,
+                  iconColor: Colors.green.shade500,
+                ),
+                SummaryItem(
+                  color: color,
+                  textStyle: textStyle,
+                  title: 'Tingkat Depresi',
+                  value: result.riskLevel,
+                  icon: Icons.health_and_safety_outlined,
+                  iconColor: getRiskColor(result.riskLevel, color),
+                ),
+              ],
             ),
             const SizedBox(height: 14),
 
-            // Rekomendasi
+            // Widget untuk menampilkan rekomendasi sesuai dengan hasil skrining
             Recomendation(
+              title: 'Rekomendasi',
               color: color,
               textStyle: textStyle,
               recommendation: recommendation,
             ),
             const SizedBox(height: 24),
 
-            // Info auto save
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.check_circle_outline,
-                    color: color.primary,
-                    size: 24,
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      'Hasil skrining telah disimpan di riwayat skrining',
-                      style: textStyle.bodyLarge?.copyWith(
-                        color: color.outline,
-                        fontWeight: FontWeight.w500,
-                        height: 1.3,
-                        fontSize: 17,
+            // Widget untuk memberikan pilihan aksi yang bisa dilakukan oleh user
+            TitleAction(
+              textStyle: textStyle,
+              color: color,
+              mainTitle: 'Aksi Cepat',
+              actionType: ActionType.none,
+            ),
+            const SizedBox(height: 14),
+            QuickAction(
+              color: color,
+              textStyle: textStyle,
+              actions: [
+                QuickActionItem(
+                  color: color,
+                  textStyle: textStyle,
+                  icon: Icons.home_outlined,
+                  label: 'Beranda',
+                  onTap: () {
+                    ref.invalidate(questionnaireProvider);
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (_) => const NavigationScreen(),
                       ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
+                      (Route<dynamic> route) => false,
+                    );
+                  },
+                ),
+                QuickActionItem(
+                  color: color,
+                  textStyle: textStyle,
+                  icon: Icons.fact_check_outlined,
+                  label: 'Skrining',
+                  onTap: () {
+                    ref.read(questionnaireProvider.notifier).reset();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const ScreeningScreen(),
+                      ),
+                    );
+                  },
+                ),
+                QuickActionItem(
+                  color: color,
+                  textStyle: textStyle,
+                  icon: Icons.history_toggle_off_outlined,
+                  label: 'Riwayat',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const HistoryScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),
       ),
-
-      // Tombol bawah
       bottomNavigationBar: BottomAppBar(
-        color: color.surfaceContainerLowest,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            ButtonAction(
-              color: color,
-              textStyle: textStyle,
-              titleAction: 'Kembali Ke Beranda',
-              buttonColor: color.primaryContainer,
-              titleActionColor: color.onPrimaryContainer,
-              onPressed: () {
-                ref.invalidate(questionnaireProvider);
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const NavigationScreen()),
-                  (Route<dynamic> route) =>
-                      false, // hapus semua route sebelumnya
-                );
-              },
+        color: color.surface,
+        child: Center(
+          child: Text(
+            'Hasil Skrining diatas otomatis tersimpan sebagai riwayat',
+            style: textStyle.bodyMedium?.copyWith(
+              color: color.outlineVariant,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w500,
+              fontSize: 15,
             ),
-            const SizedBox.shrink(),
-          ],
+          ),
         ),
       ),
     );

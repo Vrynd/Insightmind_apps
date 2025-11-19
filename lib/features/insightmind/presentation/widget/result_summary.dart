@@ -1,137 +1,108 @@
 import 'package:flutter/material.dart';
 
+// Fungsi dalam menentukan warna pada icon sesuai dengan tingkat depresi dari user.
+Color getRiskColor(String level, ColorScheme color) {
+  switch (level.toLowerCase()) {
+    case 'minimal':
+      return Colors.green;
+    case 'ringan':
+      return Colors.lightGreen;
+    case 'sedang':
+      return Colors.orange;
+    case 'cukup berat':
+      return Colors.deepOrange;
+    case 'berat':
+      return Colors.red;
+    default:
+      // wrana default dari icon, jika tidak ada yang sesuai dari case diatas
+      return color.primary;
+  }
+}
+
 class ResultSummary extends StatelessWidget {
-  final int score;
   final String riskLevel;
   final ColorScheme color;
   final TextTheme textStyle;
+  final List<SummaryItem> item;
 
   const ResultSummary({
     super.key,
-    required this.score,
     required this.riskLevel,
     required this.color,
     required this.textStyle,
+    required this.item,
   });
-
-  Color _getRiskColor(String level, ColorScheme color) {
-    switch (level.toLowerCase()) {
-      case 'minimal':
-        return Colors.green;
-      case 'ringan':
-        return Colors.lightGreen;
-      case 'sedang':
-        return Colors.orange;
-      case 'cukup berat':
-        return Colors.deepOrange;
-      case 'berat':
-        return Colors.red;
-      default:
-        return color.primary;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    final riskColor = _getRiskColor(riskLevel, color);
-
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      spacing: 14,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-            decoration: BoxDecoration(
-              color: color.surfaceContainerLowest,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Total Skor',
-                      style: textStyle.bodyLarge?.copyWith(
-                        color: color.outline,
-                        height: 1.4,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 17,
-                      ),
-                    ),
-                    Icon(
-                      Icons.assessment_outlined,
-                      color: color.secondary,
-                      size: 21,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
+      children: item,
+    );
+  }
+}
 
+class SummaryItem extends StatelessWidget {
+  final ColorScheme color;
+  final TextTheme textStyle;
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color? iconColor;
+
+  const SummaryItem({
+    super.key,
+    required this.color,
+    required this.textStyle,
+    required this.title,
+    required this.value,
+    required this.icon,
+    this.iconColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        decoration: BoxDecoration(
+          color: color.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          spacing: 6,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Widget untuk menampilkan judul dan icon
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
                 Text(
-                  '$score',
-                  style: textStyle.titleLarge?.copyWith(
-                    fontSize: 25,
-                    height: 1.1,
-                    color: color.onSurfaceVariant,
+                  title,
+                  style: textStyle.titleSmall?.copyWith(
+                    color: color.outline,
+                    height: 1.3,
+                    fontSize: 17,
                   ),
                 ),
+                Icon(icon, size: 21, color: iconColor ?? color.secondary),
               ],
             ),
-          ),
-        ),
-        const SizedBox(width: 14),
 
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-            decoration: BoxDecoration(
-              color: color.surfaceContainerLowest,
-              borderRadius: BorderRadius.circular(12),
+            // Widget untuk menampilkan nilai hasil dari skrining
+            Text(
+              value,
+              style: textStyle.titleLarge?.copyWith(
+                fontSize: 25,
+                height: 1.1,
+                color: color.onSurfaceVariant,
+              ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Tingkat Depresi',
-                      style: textStyle.bodyLarge?.copyWith(
-                        color: color.outline,
-                        height: 1.4,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 17,
-                      ),
-                    ),
-                    Icon(
-                      Icons.health_and_safety_outlined,
-                      color: riskColor,
-                      size: 21,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-
-                Text(
-                  riskLevel,
-                  style: textStyle.titleLarge?.copyWith(
-                    fontSize: 25,
-                    height: 1.1,
-                    color: color.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/home_screen.dart';
-import 'package:insightmind_app/features/insightmind/presentation/screen/setting_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
@@ -22,7 +21,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
     return ScaffoldApp(
       body: switch (selectedIndex) {
         0 => const HomeScreen(),
-        1 => const SettingScreen(),
         _ => const HomeScreen(),
       },
       bottomNavigationBar: SalomonBottomBar(
@@ -36,7 +34,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
         },
         items: [
           SalomonBottomBarItem(
-            icon: const Icon(Icons.explore_outlined, size: 28),
+            icon: Icon(Icons.home_outlined, size: 26),
             title: Text(
               "Beranda",
               style: textStyle.bodyLarge?.copyWith(
@@ -45,21 +43,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 color: color.onSurfaceVariant,
               ),
             ),
-            selectedColor: Theme.of(context).colorScheme.primary,
-            unselectedColor: Theme.of(context).colorScheme.secondary,
-          ),
-          SalomonBottomBarItem(
-            icon: const Icon(Icons.settings_outlined, size: 28),
-            title: Text(
-              "Pengaturan",
-              style: textStyle.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                height: 1.4,
-                color: color.onSurfaceVariant,
-              ),
-            ),
-            selectedColor: Theme.of(context).colorScheme.primary,
-            unselectedColor: Theme.of(context).colorScheme.secondary,
+            selectedColor: color.primary,
+            unselectedColor: color.secondary,
           ),
         ],
       ),
