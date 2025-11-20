@@ -41,6 +41,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     super.dispose();
   }
 
+  // Fungsi yang akan melakukan konfirmasi jika ingin menghapus riwayat
   Future<void> _confirmRemoveItem(
     BuildContext context,
     ScreeningRecord record,
@@ -58,12 +59,15 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
       cancelTitle: "Batal",
     );
 
+    // Jika iya, maka data akan dihapus berdasarakan id nya
     if (confirmed == true) {
       await ref.read(historyRepositoryProvider).deleteById(record.id);
+      // Kemudian provider akan memperbarui datanya
       final _ = ref.refresh(historyListProvider);
     }
   }
 
+  // Fungsi yang akan melakukan konfirmasi jika ingin menghapus semua riwayat
   Future<void> _confirmRemoveAll(BuildContext context) async {
     final confirmed = await showConfirmationSheet(
       context: context,
@@ -78,14 +82,17 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
       cancelTitle: "Batal",
     );
 
+    // Jika iya, maka semua data akan dihapus
     if (confirmed == true) {
       await ref.read(historyRepositoryProvider).clearAll();
+      // Kemudian provider akan memperbarui datanya
       final _ = ref.refresh(historyListProvider);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Mengambil data riwayat skrining dari provider dan memantau perubahannya
     final historyAsync = ref.watch(historyListProvider);
 
     return ScaffoldApp(
@@ -121,6 +128,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             bottom: 30,
           ),
           children: [
+            // Judul Halaman yang sedah aktif
             TitlePage(
               textStyle: textStyle,
               color: color,
@@ -128,8 +136,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             ),
             const SizedBox(height: 12),
 
+            // Widget untuk menampilkan data riwayat skrining
             historyAsync.when(
               data: (items) {
+                // Jika riwayat masih kosong, akan menampilkan widget empty history
                 if (items.isEmpty) {
                   return EmptyHistory(
                     color: color,
@@ -141,6 +151,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                   );
                 }
 
+                // Jika ada, maka akan menampilkan daftar riwayat
                 return Column(
                   children: items.map((r) {
                     return Padding(
@@ -174,6 +185,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Widget untuk menghapus daftar riwayat
             ButtonAction(
               color: color,
               textStyle: textStyle,

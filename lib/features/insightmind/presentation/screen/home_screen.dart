@@ -20,13 +20,16 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  // State menyimpan apakah widget sedang di-scroll atau tidak
   final ScrollController _scrollController = ScrollController();
   bool _isScrolling = false;
 
+  // Menginisialisasi state
   @override
   void initState() {
     super.initState();
 
+    // Mendeteksi apakah user sedang melakukan scroll dengan listener
     _scrollController.addListener(() {
       if (_scrollController.offset > 0 && !_isScrolling) {
         setState(() => _isScrolling = true);
@@ -36,6 +39,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
   }
 
+  // Membebaskan controller agar tidak terjadi memory leak
   @override
   void dispose() {
     _scrollController.dispose();
@@ -46,6 +50,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
     final textStyle = Theme.of(context).textTheme;
+
+    // Mengambil data riwayat skrining dari provider
     final historyAsync = ref.watch(historyListProvider);
 
     return ScaffoldApp(
@@ -97,6 +103,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             bottom: 30,
           ),
           children: [
+            // Judul Halaman yang sedang aktif
             TitlePage(
               textStyle: textStyle,
               color: color,
@@ -104,8 +111,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             const SizedBox(height: 14),
 
+            // Widget untuk menampilkan banner berupa gambar
             BannerApp(imagePath: 'assets/image/banner_mental_health.png'),
             const SizedBox(height: 14),
+
+            // Widget untuk mulai melakukan skrining
             StartScreening(
               color: color,
               textStyle: textStyle,
@@ -123,10 +133,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             const SizedBox(height: 24),
 
+            // Widget untuk menampilkan riwayat skrining
             TitleAction(
               textStyle: textStyle,
               color: color,
               mainTitle: 'Riwayat Skrining',
+              // Memberikan informasi terkhir kali melakukan skrining
               subTitle: historyAsync.when(
                 data: (records) => records.isNotEmpty
                     ? 'Terakhir, '
@@ -151,6 +163,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             const SizedBox(height: 14),
             historyAsync.when(
               data: (items) {
+                // Jika riwayat masih kosong, akan menampilkan widget empty history
                 if (items.isEmpty) {
                   return EmptyHistory(
                     color: color,
@@ -162,7 +175,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   );
                 }
 
-                // Ambil maksimal 3 data terakhir
+                // Mengambil 4 data terakhir dari daftar riwayat
                 final latestRecords = items.take(4).toList();
                 return Column(
                   children: latestRecords.map((r) {

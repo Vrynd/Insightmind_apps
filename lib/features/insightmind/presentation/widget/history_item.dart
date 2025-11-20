@@ -47,30 +47,29 @@ class HistoryItem extends StatelessWidget {
               bottom: 8,
             ),
             child: Row(
+              spacing: 2,
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
+                  spacing: 4,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       mainTitle,
-                      style: textStyle.bodyMedium?.copyWith(
+                      style: textStyle.bodyLarge?.copyWith(
                         color: color.outline,
                         fontWeight: FontWeight.w500,
                         height: 1.4,
-                        fontSize: 14.5
                       ),
                     ),
-                    const SizedBox(height: 2),
                     Text(
                       subTitle,
-                      style: textStyle.titleMedium?.copyWith(
+                      style: textStyle.titleLarge?.copyWith(
                         color: color.onSurfaceVariant,
-                        height: 1.2,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
+                        height: 1.1,
+                        fontSize: 24,
                       ),
                     ),
                   ],
@@ -89,7 +88,7 @@ class HistoryItem extends StatelessWidget {
                       ),
                       TextSpan(
                         text: "/27",
-                        style: textStyle.bodyLarge?.copyWith(
+                        style: textStyle.bodyMedium?.copyWith(
                           color: color.outline,
                           fontWeight: FontWeight.w500,
                           height: 1.4,
@@ -116,17 +115,18 @@ class HistoryItem extends StatelessWidget {
               bottom: 16,
             ),
             child: Row(
+              spacing: 16,
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
+                  spacing: 8,
                   children: [
                     Icon(
                       Icons.calendar_month_rounded,
                       size: 18,
                       color: color.onSurfaceVariant.withValues(alpha: 0.7),
                     ),
-                    const SizedBox(width: 8),
                     Text(
                       DateFormat('d MMMM').format(timestamp),
                       style: textStyle.bodyLarge?.copyWith(
@@ -137,15 +137,14 @@ class HistoryItem extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(width: 16),
                 Row(
+                  spacing: 8,
                   children: [
                     Icon(
                       Icons.access_time_rounded,
                       size: 18,
                       color: color.onSurfaceVariant.withValues(alpha: 0.7),
                     ),
-                    const SizedBox(width: 8),
                     Text(
                       DateFormat('HH:mm').format(timestamp),
                       style: textStyle.bodyLarge?.copyWith(

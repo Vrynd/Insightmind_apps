@@ -61,16 +61,21 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
     final color = Theme.of(context).colorScheme;
     final textStyle = Theme.of(context).textTheme;
 
+    // Mengambil daftar pertanyaan dan state kuisioner dari provider
     final questions = ref.watch(questionsProvider);
     final questionnaireState = ref.watch(questionnaireProvider);
+    // Digunakan untuk mengubah state kuisioner seperti reset
     final questionnaireNotifier = ref.read(questionnaireProvider.notifier);
 
+    // Menghitung progres kuisioner sesuai dengan jumlah jawaban yang diisi
     final answeredCount = questionnaireState.answers.length;
     final totalCount = questions.length;
     final progressValue = totalCount > 0 ? answeredCount / totalCount : 0.0;
 
+    // Ambil total skor dari semua jawaban dan cek apakah semuanya sudah dijawab
     final totalScore = questionnaireState.totalScore;
     final isComplete = questionnaireState.isComplete;
+    // Cek apakah ada jawaban yang sudah diisi user
     final isAnyAnswered = questionnaireState.answers.isNotEmpty;
 
     return PopScope(
@@ -82,7 +87,6 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
           Navigator.of(context).pop();
           return;
         }
-
         final result = await showConfirmationSheet(
           context: context,
           color: color,
@@ -134,6 +138,7 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
             controller: _scrollController,
             padding: EdgeInsets.only(top: 0, left: 18, right: 18, bottom: 30),
             children: [
+              // Judul Halaman yang sedang aktif
               TitlePage(
                 textStyle: textStyle,
                 color: color,
@@ -141,6 +146,7 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
               ),
               const SizedBox(height: 14),
 
+              // Widget untuk menampilkan progres saat user mengisi kuisioner
               IndicatorProggres(
                 title: 'Progres Anda',
                 progressValue: progressValue,
@@ -151,6 +157,7 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
               ),
               const SizedBox(height: 24),
 
+              // Widget untuk menampilkan daftar pertanyaan beserta opsi jawaban
               for (int i = 0; i < questions.length; i++) ...[
                 Questionnaire(
                   index: i + 1,
@@ -158,6 +165,7 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
                   color: color,
                   textStyle: textStyle,
                   selectedScore: questionnaireState.answers[questions[i].id],
+                  // Callback untuk memilih jawaban
                   onChanged: (score) {
                     questionnaireNotifier.selectAnswer(
                       questionId: questions[i].id,
@@ -168,6 +176,7 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
                 if (i != questions.length - 1) const SizedBox(height: 18),
               ],
 
+              // Widget yang akan menampilkan ringkasan jawaban yang sudah dijawab
               if (answeredCount > 0) ...[
                 const SizedBox(height: 24),
                 AnswerSummary(
@@ -186,7 +195,9 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
         bottomNavigationBar: BottomAppBar(
           color: color.surfaceContainerLowest,
           child: Row(
+            spacing: 12,
             children: [
+              // Widget untuk menampilkan menampilkan hasil dari skrining
               ButtonAction(
                 color: color,
                 textStyle: textStyle,
@@ -194,7 +205,8 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
                 enabled: isComplete,
                 onPressed: isComplete ? _goToResult : null,
               ),
-              const SizedBox(width: 12),
+
+              // Widget untuk mereset progress pada kuisioner
               ButtonAction(
                 color: color,
                 textStyle: textStyle,

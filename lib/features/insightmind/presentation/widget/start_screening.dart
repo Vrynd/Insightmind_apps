@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class StartScreening extends StatelessWidget {
+class StartScreening extends StatefulWidget {
   final ColorScheme color;
   final TextTheme textStyle;
   final String mainTitle;
@@ -19,56 +19,72 @@ class StartScreening extends StatelessWidget {
   });
 
   @override
+  State<StartScreening> createState() => _StartScreeningState();
+}
+
+class _StartScreeningState extends State<StartScreening> {
+  // State untuk menyimpan status apakah card ditekan atau tidak
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed,
-      child: Container(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) => setState(() => _isPressed = false),
+      onTapCancel: () => setState(() => _isPressed = false),
+      onTap: widget.onPressed,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         width: double.infinity,
+        transform: Matrix4.translationValues(_isPressed ? 3 : 0, 0, 0),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.surfaceContainerLowest,
+          color: widget.color.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
+          spacing: 14,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // Widget untuk menampilkan ilustrasi/gambar dari card
             Container(
               width: 68,
               height: 70,
               decoration: BoxDecoration(
-                color: color.primaryContainer,
+                color: widget.color.primaryContainer,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
                 child: Image.asset(
-                  imagePath,
+                  widget.imagePath,
                   width: 50,
                   height: 50,
                   fit: BoxFit.contain,
                 ),
               ),
             ),
-            const SizedBox(width: 14),
             Expanded(
               child: Column(
+                spacing: 6,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Widget untuk menampilkan judul pada card
                   Text(
-                    mainTitle,
-                    style: textStyle.titleMedium?.copyWith(
-                      color: color.onSurfaceVariant,
+                    widget.mainTitle,
+                    style: widget.textStyle.titleMedium?.copyWith(
+                      color: widget.color.onSurface,
                       fontWeight: FontWeight.w600,
-                      height: 1.2,
+                      height: 1.3,
                       fontSize: 20,
                     ),
                   ),
-                  const SizedBox(height: 6),
+
+                  // Widget untuk menampilkan deskripsi pada card
                   Text(
-                    subTitle,
-                    style: textStyle.bodyLarge?.copyWith(
-                      color: color.outline,
-                      fontWeight: FontWeight.w500,
+                    widget.subTitle,
+                    style: widget.textStyle.titleSmall?.copyWith(
+                      color: widget.color.outline,
                       height: 1.3,
                       fontSize: 17,
                     ),
