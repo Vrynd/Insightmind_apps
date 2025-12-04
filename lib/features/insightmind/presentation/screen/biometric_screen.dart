@@ -34,7 +34,6 @@ class _BiometricScreenState extends ConsumerState<BiometricScreen> {
 
   @override
   void dispose() {
-    ref.read(ppgProvider.notifier).stopCapture();
     _scrollController.dispose();
     super.dispose();
   }
