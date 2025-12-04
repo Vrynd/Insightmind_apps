@@ -19,15 +19,15 @@ Color getRiskColor(String level, ColorScheme color) {
   }
 }
 
-class ResultSummary extends StatelessWidget {
-  final String riskLevel;
+class MetricsSummary extends StatelessWidget {
+  final String? riskLevel;
   final ColorScheme color;
   final TextTheme textStyle;
-  final List<SummaryItem> item;
+  final List<MetricsItem> item;
 
-  const ResultSummary({
+  const MetricsSummary({
     super.key,
-    required this.riskLevel,
+    this.riskLevel,
     required this.color,
     required this.textStyle,
     required this.item,
@@ -43,15 +43,16 @@ class ResultSummary extends StatelessWidget {
   }
 }
 
-class SummaryItem extends StatelessWidget {
+class MetricsItem extends StatelessWidget {
   final ColorScheme color;
   final TextTheme textStyle;
   final String title;
   final String value;
   final IconData icon;
   final Color? iconColor;
+  final bool useHighBackground;
 
-  const SummaryItem({
+  const MetricsItem({
     super.key,
     required this.color,
     required this.textStyle,
@@ -59,6 +60,7 @@ class SummaryItem extends StatelessWidget {
     required this.value,
     required this.icon,
     this.iconColor,
+    this.useHighBackground = false,
   });
 
   @override
@@ -67,7 +69,9 @@ class SummaryItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          color: color.surfaceContainerLowest,
+          color: useHighBackground
+              ? color.surfaceContainerHigh.withValues(alpha: .4)
+              : color.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -84,7 +88,7 @@ class SummaryItem extends StatelessWidget {
                   style: textStyle.titleSmall?.copyWith(
                     color: color.outline,
                     height: 1.3,
-                    fontSize: 17,
+                    fontSize: 16,
                   ),
                 ),
                 Icon(icon, size: 21, color: iconColor ?? color.secondary),

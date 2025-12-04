@@ -9,7 +9,7 @@ import 'package:insightmind_app/features/insightmind/presentation/screen/navigat
 import 'package:insightmind_app/features/insightmind/presentation/screen/screening_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/quick_action.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/recomendation.dart';
-import 'package:insightmind_app/features/insightmind/presentation/widget/result_summary.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/metrics_summary.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_action.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_page.dart';
@@ -110,12 +110,12 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
             const SizedBox(height: 14),
 
             // Widget untuk menampilkan hasil dari skrining yang dilakukan
-            ResultSummary(
+            MetricsSummary(
               riskLevel: result.riskLevel,
               color: color,
               textStyle: textStyle,
               item: [
-                SummaryItem(
+                MetricsItem(
                   color: color,
                   textStyle: textStyle,
                   title: 'Total Skor',
@@ -123,7 +123,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                   icon: Icons.assessment_outlined,
                   iconColor: Colors.green.shade500,
                 ),
-                SummaryItem(
+                MetricsItem(
                   color: color,
                   textStyle: textStyle,
                   title: 'Tingkat Depresi',
