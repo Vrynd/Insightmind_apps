@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/ppg_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/sensor_provider.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/metrics_card.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/metrics_summary.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_page.dart';
 
@@ -88,69 +90,68 @@ class _BiometricScreenState extends ConsumerState<BiometricScreen> {
               title: 'Sensor & Biometrik',
             ),
             const SizedBox(height: 14),
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Accelerometer',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text('Mean: ${accel.mean.toStringAsFixed(4)}'),
-                    Text('Variance: ${accel.variance.toStringAsFixed(4)}'),
-                  ],
+            MetricsCard(
+              title: 'Accelerometer',
+              color: color,
+              textStyle: textStyle,
+              value: [
+                MetricsItem(
+                  title: 'Mean',
+                  value: accel.mean.toStringAsFixed(4),
+                  icon: Icons.calculate_outlined,
+                  iconColor: Colors.blueAccent,
+                  color: color,
+                  useHighBackground: true,
+                  textStyle: textStyle,
                 ),
-              ),
+                MetricsItem(
+                  title: 'Variance',
+                  value: accel.variance.toStringAsFixed(4),
+                  icon: Icons.stacked_line_chart_rounded,
+                  iconColor: Colors.orangeAccent,
+                  color: color,
+                  useHighBackground: true,
+                  textStyle: textStyle,
+                ),
+              ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 14),
 
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'PPG via Kamera',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text('Mean Y: ${ppg.mean.toStringAsFixed(6)}'),
-                    Text('Variance: ${ppg.variance.toStringAsFixed(6)}'),
-                    Text('Samples: ${ppg.samples.length}'),
-                    const SizedBox(height: 12),
-                    FilledButton(
-                      onPressed: () {
-                        if (!ppg.capturing) {
-                          ref.read(ppgProvider.notifier).startCapture();
-                        } else {
-                          ref.read(ppgProvider.notifier).stopCapture();
-                        }
-                      },
-                      child: Text(
-                        ppg.capturing ? 'Stop Capture' : 'Start Capture',
-                      ),
-                    ),
-                  ],
+            MetricsCard(
+              title: 'PPG via Kamera',
+              color: color,
+              textStyle: textStyle,
+              value: [
+                MetricsItem(
+                  title: 'Mean Y',
+                  value: ppg.mean.toStringAsFixed(6),
+                  icon: Icons.calculate_outlined,
+                  iconColor: Colors.blueAccent,
+                  color: color,
+                  useHighBackground: true,
+                  textStyle: textStyle,
                 ),
-              ),
+                MetricsItem(
+                  title: 'Variance',
+                  value: ppg.variance.toStringAsFixed(6),
+                  icon: Icons.stacked_line_chart_rounded,
+                  iconColor: Colors.orangeAccent,
+                  color: color,
+                  useHighBackground: true,
+                  textStyle: textStyle,
+                ),
+              ],
+              showListTile: true,
+              listTileTitle: 'Samples',
+              listTileSubtitle: ppg.samples.length.toString(),
+              capturing: ppg.capturing,
+              onPressed: () {
+                if (!ppg.capturing) {
+                  ref.read(ppgProvider.notifier).startCapture();
+                } else {
+                  ref.read(ppgProvider.notifier).stopCapture();
+                }
+              },
             ),
           ],
         ),
