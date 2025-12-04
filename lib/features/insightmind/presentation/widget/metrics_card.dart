@@ -49,9 +49,10 @@ class MetricsCard extends StatelessWidget {
               style: textStyle.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: color.onSurfaceVariant,
+                fontSize: 20,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
 
             // ResultSummary
             MetricsSummary(color: color, textStyle: textStyle, item: value),
@@ -61,22 +62,22 @@ class MetricsCard extends StatelessWidget {
                 listTileTitle != null &&
                 listTileSubtitle != null)
               Padding(
-                padding: const EdgeInsets.only(top: 12),
+                padding: const EdgeInsets.only(top: 14),
                 child: ListTile(
                   dense: true,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
-                    vertical: 0,
+                    vertical: 6,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                   tileColor: color.surfaceContainerHigh.withAlpha(100),
                   title: Text(
                     listTileTitle!,
                     style: textStyle.titleSmall?.copyWith(
                       color: color.outline,
-                      fontSize: 16,
+                      fontSize: 17,
                     ),
                   ),
                   subtitle: Text(

@@ -88,7 +88,7 @@ class MetricsItem extends StatelessWidget {
                   style: textStyle.titleSmall?.copyWith(
                     color: color.outline,
                     height: 1.3,
-                    fontSize: 16,
+                    fontSize: 17,
                   ),
                 ),
                 Icon(icon, size: 21, color: iconColor ?? color.secondary),
