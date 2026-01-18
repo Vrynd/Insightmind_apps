@@ -1,21 +1,47 @@
 import 'package:flutter/material.dart';
 
-// Fungsi dalam menentukan warna pada icon sesuai dengan tingkat depresi dari user.
-Color getRiskColor(String level, ColorScheme color) {
-  switch (level.toLowerCase()) {
-    case 'minimal':
-      return Colors.green;
-    case 'ringan':
-      return Colors.lightGreen;
-    case 'sedang':
-      return Colors.orange;
-    case 'cukup berat':
-      return Colors.deepOrange;
-    case 'berat':
-      return Colors.red;
-    default:
-      // wrana default dari icon, jika tidak ada yang sesuai dari case diatas
-      return color.primary;
+/// Konteks penentuan warna risk
+enum RiskContext {
+  screening,
+  aiPrediction,
+}
+
+/// Fungsi untuk menentukan warna icon sesuai risk level
+Color getRiskColor(
+  String level,
+  ColorScheme color, {
+  RiskContext context = RiskContext.screening,
+}) {
+  final l = level.toLowerCase();
+
+  switch (context) {
+    case RiskContext.screening:
+      switch (l) {
+        case 'minimal':
+          return Colors.green;
+        case 'ringan':
+          return Colors.lightGreen;
+        case 'sedang':
+          return Colors.orange;
+        case 'cukup berat':
+          return Colors.deepOrange;
+        case 'berat':
+          return Colors.red;
+        default:
+          return color.primary;
+      }
+
+    case RiskContext.aiPrediction:
+      switch (l) {
+        case 'rendah':
+          return Colors.green;
+        case 'sedang':
+          return Colors.orange;
+        case 'tinggi':
+          return Colors.red;
+        default:
+          return color.primary;
+      }
   }
 }
 
@@ -73,13 +99,14 @@ class MetricsItem extends StatelessWidget {
               ? color.surfaceContainerHigh.withValues(alpha: .4)
               : color.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.outlineVariant.withAlpha(50), width: 1.1),
         ),
         child: Column(
           spacing: 6,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Widget untuk menampilkan judul dan icon
+            // Judul & icon
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -91,11 +118,15 @@ class MetricsItem extends StatelessWidget {
                     fontSize: 17,
                   ),
                 ),
-                Icon(icon, size: 21, color: iconColor ?? color.secondary),
+                Icon(
+                  icon,
+                  size: 21,
+                  color: iconColor ?? color.secondary,
+                ),
               ],
             ),
 
-            // Widget untuk menampilkan nilai hasil dari skrining
+            // Nilai metrik
             Text(
               value,
               style: textStyle.titleLarge?.copyWith(

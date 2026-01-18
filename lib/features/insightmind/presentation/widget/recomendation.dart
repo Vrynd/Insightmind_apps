@@ -71,6 +71,7 @@ class _RecomendationState extends State<Recomendation> {
       decoration: BoxDecoration(
         color: color.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.outlineVariant.withAlpha(50), width: 1.1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

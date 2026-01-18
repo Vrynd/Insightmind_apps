@@ -4,8 +4,8 @@ import 'package:insightmind_app/features/insightmind/domain/entities/recomendati
 import 'package:insightmind_app/features/insightmind/presentation/providers/history_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/questionnare_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/score_provider.dart';
+import 'package:insightmind_app/features/insightmind/presentation/screen/biometric_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/history_screen.dart';
-import 'package:insightmind_app/features/insightmind/presentation/screen/navigation_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/screening_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/quick_action.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/recomendation.dart';
@@ -87,7 +87,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
             ),
           ),
         ),
-        automaticallyImplyLeading: false,
+        // automaticallyImplyLeading: false,
       ),
 
       // Body
@@ -120,7 +120,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                   textStyle: textStyle,
                   title: 'Total Skor',
                   value: '${result.score}',
-                  icon: Icons.assessment_outlined,
+                  icon: Icons.analytics_outlined,
                   iconColor: Colors.green.shade500,
                 ),
                 MetricsItem(
@@ -129,7 +129,11 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                   title: 'Tingkat Depresi',
                   value: result.riskLevel,
                   icon: Icons.health_and_safety_outlined,
-                  iconColor: getRiskColor(result.riskLevel, color),
+                  iconColor: getRiskColor(
+                    result.riskLevel,
+                    color,
+                    context: RiskContext.screening,
+                  ),
                 ),
               ],
             ),
@@ -159,28 +163,26 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                 QuickActionItem(
                   color: color,
                   textStyle: textStyle,
-                  icon: Icons.home_outlined,
-                  label: 'Beranda',
+                  icon: Icons.assignment_outlined,
+                  label: 'Skrining',
                   onTap: () {
-                    ref.invalidate(questionnaireProvider);
-                    Navigator.of(context).pushAndRemoveUntil(
+                    ref.read(questionnaireProvider.notifier).reset();
+                    Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (_) => const NavigationScreen(),
+                        builder: (_) => const ScreeningScreen(),
                       ),
-                      (Route<dynamic> route) => false,
                     );
                   },
                 ),
                 QuickActionItem(
                   color: color,
                   textStyle: textStyle,
-                  icon: Icons.fact_check_outlined,
-                  label: 'Skrining',
+                  icon: Icons.monitor_heart_outlined,
+                  label: 'Bio-Sensor',
                   onTap: () {
-                    ref.read(questionnaireProvider.notifier).reset();
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => const ScreeningScreen(),
+                        builder: (_) => const BiometricScreen(),
                       ),
                     );
                   },
