@@ -50,9 +50,7 @@ class SensorChart extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: CustomPaint(
-                  painter: _ChartPainter(samples, chartColor),
-                ),
+                child: CustomPaint(painter: _ChartPainter(samples, chartColor)),
               ),
             ),
           ],
@@ -79,7 +77,7 @@ class _ChartPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final path = Path();
-    
+
     // Normalisasi data untuk visualisasi
     double minVal = samples[0];
     double maxVal = samples[0];
@@ -87,17 +85,19 @@ class _ChartPainter extends CustomPainter {
       if (s < minVal) minVal = s;
       if (s > maxVal) maxVal = s;
     }
-    
+
     double range = maxVal - minVal;
     if (range == 0) range = 1;
 
-    final double stepX = size.width / (samples.length > 1 ? samples.length - 1 : 1);
+    final double stepX =
+        size.width / (samples.length > 1 ? samples.length - 1 : 1);
 
     for (int i = 0; i < samples.length; i++) {
       double x = i * stepX;
       // Membalik y karena koordinat 0,0 ada di kiri atas
       double normalizedY = (samples[i] - minVal) / range;
-      double y = size.height - (normalizedY * size.height * 0.8 + (size.height * 0.1));
+      double y =
+          size.height - (normalizedY * size.height * 0.8 + (size.height * 0.1));
 
       if (i == 0) {
         path.moveTo(x, y);

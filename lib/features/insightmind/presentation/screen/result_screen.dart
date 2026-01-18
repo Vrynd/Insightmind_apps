@@ -87,7 +87,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
             ),
           ),
         ),
-        automaticallyImplyLeading: false,
+        // automaticallyImplyLeading: false,
       ),
 
       // Body
@@ -120,7 +120,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                   textStyle: textStyle,
                   title: 'Total Skor',
                   value: '${result.score}',
-                  icon: Icons.assessment_outlined,
+                  icon: Icons.analytics_outlined,
                   iconColor: Colors.green.shade500,
                 ),
                 MetricsItem(
@@ -129,7 +129,11 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                   title: 'Tingkat Depresi',
                   value: result.riskLevel,
                   icon: Icons.health_and_safety_outlined,
-                  iconColor: getRiskColor(result.riskLevel, color),
+                  iconColor: getRiskColor(
+                    result.riskLevel,
+                    color,
+                    context: RiskContext.screening,
+                  ),
                 ),
               ],
             ),

@@ -173,8 +173,18 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                   }).toList(),
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text('Error: $e')),
+              loading: () => const Center(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 32),
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+              error: (e, _) => Padding(
+                padding: const EdgeInsets.only(top: 32),
+                child: Center(
+                  child: Text('Terjadi kesalahan:\n$e'),
+                ),
+              ),
             ),
           ],
         ),

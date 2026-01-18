@@ -1,69 +1,217 @@
-// WEEK7 - UI Prediksi AI modern
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insightmind_app/features/insightmind/data/models/feature_vector.dart';
-import '../providers/ai_provider.dart';
+import 'package:insightmind_app/features/insightmind/presentation/providers/ai_provider.dart';
+import 'package:insightmind_app/features/insightmind/presentation/providers/questionnare_provider.dart';
+import 'package:insightmind_app/features/insightmind/presentation/screen/navigation_screen.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/button_action.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/metrics_summary.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/title_page.dart';
 
-class AIResultScreen extends ConsumerWidget {
+class AIResultScreen extends ConsumerStatefulWidget {
   final FeatureVector fv;
   const AIResultScreen({super.key, required this.fv});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final result = ref.watch(aiResultProvider(fv));
-    final level = result['riskLevel'];
-    final weighted = result['weightedScore'];
-    final conf = result['confidence'];
+  ConsumerState<AIResultScreen> createState() => _AIResultScreenState();
+}
+
+class _AIResultScreenState extends ConsumerState<AIResultScreen> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isScrolling = false;
+
+  ColorScheme get color => Theme.of(context).colorScheme;
+  TextTheme get textStyle => Theme.of(context).textTheme;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.offset > 0 && !_isScrolling) {
+        setState(() => _isScrolling = true);
+      } else if (_scrollController.offset <= 0 && _isScrolling) {
+        setState(() => _isScrolling = false);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final resultAsync = ref.watch(aiResultProvider(widget.fv));
 
     return Scaffold(
+      backgroundColor: color.surface,
       appBar: AppBar(
-        title: const Text("AI Risk Prediction"),
-        elevation: 2,
-      ),
-      body: Center(
-        child: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          shadowColor: Colors.indigo.withValues(alpha: 0.3),
-          elevation: 6,
-          margin: const EdgeInsets.all(24),
-          child: Padding(
-            padding: const EdgeInsets.all(28),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.insights, size: 80, color: Colors.indigo.shade600),
-                const SizedBox(height: 20),
-                Text(
-                  "Tingkat Risiko: $level",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: level == "Tinggi"
-                        ? Colors.red
-                        : level == "Sedang"
-                            ? Colors.orange
-                            : Colors.green,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Text("Skor AI: ${weighted.toStringAsFixed(2)}"),
-                Text("Confidence: ${(conf * 100).toStringAsFixed(1)}%"),
-                const SizedBox(height: 20),
-                FilledButton.icon(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.arrow_back),
-                  label: const Text("Kembali"),
-                ),
-              ],
+        scrolledUnderElevation: 0,
+        backgroundColor: _isScrolling
+            ? color.surfaceContainerLowest
+            : color.surface,
+        centerTitle: true,
+        title: AnimatedOpacity(
+          duration: const Duration(milliseconds: 300),
+          opacity: _isScrolling ? 1.0 : 0.0,
+          child: Text(
+            'Hasil Prediksi',
+            style: textStyle.titleMedium?.copyWith(
+              color: color.onSurfaceVariant,
+              fontWeight: FontWeight.w600,
+              fontSize: 19,
+              height: 1.2,
             ),
           ),
+        ),
+        // automaticallyImplyLeading: false,
+      ),
+      body: ScrollConfiguration(
+        behavior: const ScrollBehavior().copyWith(
+          overscroll: false,
+          physics: const BouncingScrollPhysics(),
+        ),
+        child: ListView(
+          controller: _scrollController,
+          padding: const EdgeInsets.only(
+            top: 0,
+            left: 18,
+            right: 18,
+            bottom: 30,
+          ),
+          children: [
+            TitlePage(
+              textStyle: textStyle,
+              color: color,
+              title: 'Hasil Prediksi',
+            ),
+            const SizedBox(height: 14),
+
+            resultAsync.when(
+              data: (result) {
+                final String riskLevel = result['riskLevel'];
+                final double score = result['weightedScore'];
+                final double confidence = result['confidence'];
+
+                return Column(
+                  children: [
+                    ListTile(
+                      tileColor: color.surfaceContainerLowest,
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 4,
+                        horizontal: 16,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        side: BorderSide(
+                          color: color.outlineVariant.withAlpha(50),
+                          width: 1.1,
+                        ),
+                      ),
+                      title: Text(
+                        'Tingkat Risiko',
+                        style: textStyle.titleSmall?.copyWith(
+                          color: color.outline,
+                          height: 1.3,
+                          fontSize: 17,
+                        ),
+                      ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.only(top: 6.0),
+                        child: Text(
+                          riskLevel,
+                          style: textStyle.titleLarge?.copyWith(
+                            fontSize: 25,
+                            height: 1.1,
+                            color: color.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                      trailing: CircleAvatar(
+                        backgroundColor: color.surfaceContainerLow,
+                        child: Icon(
+                          Icons.health_and_safety_outlined,
+                          size: 24,
+                          color: getRiskColor(
+                            riskLevel,
+                            color,
+                            context: RiskContext.aiPrediction,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    MetricsSummary(
+                      riskLevel: riskLevel,
+                      color: color,
+                      textStyle: textStyle,
+                      item: [
+                        MetricsItem(
+                          color: color,
+                          textStyle: textStyle,
+                          title: 'Skor Prediksi',
+                          value: score.toStringAsFixed(2),
+                          icon: Icons.analytics_outlined,
+                          iconColor: Colors.green.shade500,
+                        ),
+                        MetricsItem(
+                          color: color,
+                          textStyle: textStyle,
+                          title: 'Confidence Level',
+                          value: '${(confidence * 100).toStringAsFixed(1)}%',
+                          icon: Icons.verified_outlined,
+                          iconColor: getRiskColor(riskLevel, color),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+              loading: () => const Center(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 32),
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+              error: (e, _) => Padding(
+                padding: const EdgeInsets.only(top: 32),
+                child: Center(child: Text('Terjadi kesalahan:\n$e')),
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      bottomNavigationBar: BottomAppBar(
+        color: color.surfaceContainerLowest,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Widget untuk kembali ke beranda
+            ButtonAction(
+              color: color,
+              textStyle: textStyle,
+              titleAction: 'Kembali Ke Beranda',
+              buttonColor: color.outlineVariant,
+              titleActionColor: color.onSurfaceVariant,
+              enabled: true,
+              onPressed: () {
+                ref.invalidate(questionnaireProvider);
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (_) => const NavigationScreen(),
+                      ),
+                      (Route<dynamic> route) => false,
+                    );
+              },
+            ),
+            const SizedBox.shrink(),
+          ],
         ),
       ),
     );
   }
-}
-
-extension on AsyncValue<Map<String, dynamic>> {
-  operator [](String other) {}
 }
