@@ -27,6 +27,8 @@ dependencies:
   camera: ^0.11.3
   fl_chart: ^1.1.1
   syncfusion_flutter_charts: ^32.1.23
+  pdf: ^3.11.3
+  printing: ^5.14.2
 
 dev_dependencies:
   flutter_test:
