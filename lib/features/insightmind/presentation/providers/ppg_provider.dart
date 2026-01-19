@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
-
 /// State PPG: capturing, samples, mean, variance
 class PpgState {
   final bool capturing;
@@ -41,14 +40,7 @@ final ppgProvider = StateNotifierProvider<PpgNotifier, PpgState>(
 /// Notifier untuk PPG
 class PpgNotifier extends StateNotifier<PpgState> {
   PpgNotifier()
-      : super(
-          PpgState(
-            capturing: false,
-            samples: [],
-            mean: 0,
-            variance: 0,
-          ),
-        );
+    : super(PpgState(capturing: false, samples: [], mean: 0, variance: 0));
 
   CameraController? _controller;
 
@@ -107,5 +99,9 @@ class PpgNotifier extends StateNotifier<PpgState> {
     }
 
     state = state.copyWith(capturing: false);
+  }
+
+  void reset() {
+    state = PpgState(capturing: false, samples: [], mean: 0, variance: 0);
   }
 }

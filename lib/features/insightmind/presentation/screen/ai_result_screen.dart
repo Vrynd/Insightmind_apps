@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insightmind_app/features/insightmind/data/models/feature_vector.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/ai_provider.dart';
-import 'package:insightmind_app/features/insightmind/presentation/providers/questionnare_provider.dart';
-import 'package:insightmind_app/features/insightmind/presentation/screen/navigation_screen.dart';
-import 'package:insightmind_app/features/insightmind/presentation/widget/button_action.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/metrics_summary.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_page.dart';
 
@@ -92,7 +89,7 @@ class _AIResultScreenState extends ConsumerState<AIResultScreen> {
             resultAsync.when(
               data: (result) {
                 final String riskLevel = result['riskLevel'];
-                final double score = result['weightedScore'];
+                final int score = result['phqEquivalentScore'];
                 final double confidence = result['confidence'];
 
                 return Column(
@@ -133,12 +130,8 @@ class _AIResultScreenState extends ConsumerState<AIResultScreen> {
                         backgroundColor: color.surfaceContainerLow,
                         child: Icon(
                           Icons.health_and_safety_outlined,
-                          size: 24,
-                          color: getRiskColor(
-                            riskLevel,
-                            color,
-                            context: RiskContext.aiPrediction,
-                          ),
+                          size: 26,
+                          color: getRiskColor(riskLevel, color),
                         ),
                       ),
                     ),
@@ -153,17 +146,17 @@ class _AIResultScreenState extends ConsumerState<AIResultScreen> {
                           color: color,
                           textStyle: textStyle,
                           title: 'Skor Prediksi',
-                          value: score.toStringAsFixed(2),
+                          value: score.toString(),
                           icon: Icons.analytics_outlined,
                           iconColor: Colors.green.shade500,
                         ),
                         MetricsItem(
                           color: color,
                           textStyle: textStyle,
-                          title: 'Confidence Level',
+                          title: 'Tingkat Keyakinan',
                           value: '${(confidence * 100).toStringAsFixed(1)}%',
                           icon: Icons.verified_outlined,
-                          iconColor: getRiskColor(riskLevel, color),
+                          iconColor: color.primary,
                         ),
                       ],
                     ),
@@ -181,34 +174,6 @@ class _AIResultScreenState extends ConsumerState<AIResultScreen> {
                 child: Center(child: Text('Terjadi kesalahan:\n$e')),
               ),
             ),
-          ],
-        ),
-      ),
-
-      bottomNavigationBar: BottomAppBar(
-        color: color.surfaceContainerLowest,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Widget untuk kembali ke beranda
-            ButtonAction(
-              color: color,
-              textStyle: textStyle,
-              titleAction: 'Kembali Ke Beranda',
-              buttonColor: color.outlineVariant,
-              titleActionColor: color.onSurfaceVariant,
-              enabled: true,
-              onPressed: () {
-                ref.invalidate(questionnaireProvider);
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (_) => const NavigationScreen(),
-                      ),
-                      (Route<dynamic> route) => false,
-                    );
-              },
-            ),
-            const SizedBox.shrink(),
           ],
         ),
       ),
