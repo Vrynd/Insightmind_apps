@@ -160,7 +160,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                         riskLevel: r.riskLevel,
                         color: color,
                         textStyle: textStyle,
-                        mainTitle: 'Tingkat Depresi',
+                        mainTitle: 'Tingkat Risiko',
                         subTitle: r.riskLevel,
                         percent: r.score / 27,
                         score: r.score,

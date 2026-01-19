@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/home_screen.dart';
+import 'package:insightmind_app/features/insightmind/presentation/screen/statistic_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
@@ -21,6 +22,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
     return ScaffoldApp(
       body: switch (selectedIndex) {
         0 => const HomeScreen(),
+        1 => const StatisticScreen(),
         _ => const HomeScreen(),
       },
       bottomNavigationBar: SalomonBottomBar(
@@ -46,7 +48,19 @@ class _NavigationScreenState extends State<NavigationScreen> {
             selectedColor: color.primary,
             unselectedColor: color.secondary,
           ),
-
+          SalomonBottomBarItem(
+            icon: Icon(Icons.analytics_outlined, size: 26),
+            title: Text(
+              "Statistik",
+              style: textStyle.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                height: 1.4,
+                color: color.onSurfaceVariant,
+              ),
+            ),
+            selectedColor: color.primary,
+            unselectedColor: color.secondary,
+          ),
         ],
       ),
     );

@@ -28,6 +28,10 @@ class _BiometricScreenState extends ConsumerState<BiometricScreen> {
   void initState() {
     super.initState();
 
+    Future.microtask(() {
+      ref.read(ppgProvider.notifier).reset();
+    });
+
     _scrollController.addListener(() {
       if (_scrollController.offset > 0 && !_isScrolling) {
         setState(() => _isScrolling = true);
@@ -39,6 +43,7 @@ class _BiometricScreenState extends ConsumerState<BiometricScreen> {
 
   @override
   void dispose() {
+    ref.read(ppgProvider.notifier).stopCapture();
     _scrollController.dispose();
     super.dispose();
   }
@@ -65,7 +70,7 @@ class _BiometricScreenState extends ConsumerState<BiometricScreen> {
           duration: const Duration(milliseconds: 300),
           opacity: _isScrolling ? 1.0 : 0.0,
           child: Text(
-            'Sensor & Biometrik',
+            'Cek Kondisi',
             style: textStyle.titleMedium?.copyWith(
               color: color.onSurfaceVariant,
               fontWeight: FontWeight.w600,
@@ -89,11 +94,7 @@ class _BiometricScreenState extends ConsumerState<BiometricScreen> {
             bottom: 30,
           ),
           children: [
-            TitlePage(
-              textStyle: textStyle,
-              color: color,
-              title: 'Sensor & Biometrik',
-            ),
+            TitlePage(textStyle: textStyle, color: color, title: 'Cek Kondisi'),
             const SizedBox(height: 14),
             MetricsCard(
               title: 'Accelerometer',
@@ -161,7 +162,9 @@ class _BiometricScreenState extends ConsumerState<BiometricScreen> {
             const SizedBox(height: 14),
             SensorChart(
               title: 'Real-time Movement',
-              samples: ref.watch(accelerometerStreamProvider).when(
+              samples: ref
+                  .watch(accelerometerStreamProvider)
+                  .when(
                     data: (event) => [event.x, event.y, event.z],
                     loading: () => [],
                     error: (_, __) => [],

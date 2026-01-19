@@ -6,7 +6,7 @@ import 'package:insightmind_app/features/insightmind/presentation/providers/ques
 import 'package:insightmind_app/features/insightmind/presentation/providers/score_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/biometric_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/history_screen.dart';
-import 'package:insightmind_app/features/insightmind/presentation/screen/screening_screen.dart';
+import 'package:insightmind_app/features/insightmind/presentation/screen/navigation_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/quick_action.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/recomendation.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/metrics_summary.dart';
@@ -126,14 +126,10 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                 MetricsItem(
                   color: color,
                   textStyle: textStyle,
-                  title: 'Tingkat Depresi',
+                  title: 'Tingkat Risiko',
                   value: result.riskLevel,
                   icon: Icons.health_and_safety_outlined,
-                  iconColor: getRiskColor(
-                    result.riskLevel,
-                    color,
-                    context: RiskContext.screening,
-                  ),
+                  iconColor: getRiskColor(result.riskLevel, color),
                 ),
               ],
             ),
@@ -163,14 +159,15 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                 QuickActionItem(
                   color: color,
                   textStyle: textStyle,
-                  icon: Icons.assignment_outlined,
-                  label: 'Skrining',
+                  icon: Icons.home_outlined,
+                  label: 'Beranda',
                   onTap: () {
-                    ref.read(questionnaireProvider.notifier).reset();
-                    Navigator.of(context).pushReplacement(
+                    ref.invalidate(questionnaireProvider);
+                    Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
-                        builder: (_) => const ScreeningScreen(),
+                        builder: (_) => const NavigationScreen(),
                       ),
+                      (Route<dynamic> route) => false,
                     );
                   },
                 ),
@@ -178,7 +175,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                   color: color,
                   textStyle: textStyle,
                   icon: Icons.monitor_heart_outlined,
-                  label: 'Bio-Sensor',
+                  label: 'Cek Kondisi',
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
