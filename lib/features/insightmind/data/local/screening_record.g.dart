@@ -1,11 +1,4 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
 part of 'screening_record.dart';
-
-// **************************************************************************
-// TypeAdapterGenerator
-// **************************************************************************
-
 class ScreeningRecordAdapter extends TypeAdapter<ScreeningRecord> {
   @override
   final int typeId = 1;
