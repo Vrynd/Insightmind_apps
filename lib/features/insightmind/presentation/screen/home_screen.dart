@@ -4,7 +4,7 @@ import 'package:insightmind_app/features/insightmind/presentation/providers/hist
 import 'package:insightmind_app/features/insightmind/presentation/screen/history_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/screening_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/banner_app.dart';
-import 'package:insightmind_app/features/insightmind/presentation/widget/empty_history.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/empty_state.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/history_item.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/start_screening.dart';
@@ -196,10 +196,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               data: (items) {
                 // Jika riwayat masih kosong, akan menampilkan widget empty history
                 if (items.isEmpty) {
-                  return EmptyHistory(
+                  return EmptyState(
                     color: color,
                     textStyle: textStyle,
-                    imagePath: 'assets/image/empty_box.png',
+                    icon: Icons.receipt_long_outlined,
                     mainTitle: 'Belum Ada Riwayat',
                     subTitle:
                         'Mulai skrining pertama anda untuk melihat\nriwayat hasil di sini',

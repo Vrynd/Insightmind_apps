@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 
-class EmptyHistory extends StatelessWidget {
+class EmptyState extends StatelessWidget {
   final ColorScheme color;
   final TextTheme textStyle;
-  final String imagePath;
+  final String? imagePath;
+  final IconData? icon;
   final String mainTitle;
   final String subTitle;
 
-  const EmptyHistory({
+  const EmptyState({
     super.key,
     required this.color,
     required this.textStyle,
-    required this.imagePath,
     required this.mainTitle,
     required this.subTitle,
-  });
+    this.imagePath,
+    this.icon,
+  }) : assert(
+         imagePath != null || icon != null,
+         'Either imagePath or icon must be provided',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +33,22 @@ class EmptyHistory extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(
-            imagePath,
-            fit: BoxFit.cover,
-            height: 200,
-            width: 200,
-          ),
-          const SizedBox(height: 10),
+          if (imagePath != null)
+            Image.asset(imagePath!, fit: BoxFit.cover, height: 200, width: 200)
+          else
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: color.surfaceContainerHighest,
+              ),
+              child: Icon(
+                icon,
+                size: 48,
+                color: color.primary.withValues(alpha: 0.85),
+              ),
+            ),
+          const SizedBox(height: 16),
           Text(
             mainTitle,
             style: textStyle.titleMedium?.copyWith(

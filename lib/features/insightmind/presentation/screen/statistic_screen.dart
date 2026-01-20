@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/history_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/report_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/history_screen.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/empty_state.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/statistic_card.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_action.dart';
@@ -81,22 +82,17 @@ class _StatisticScreenState extends ConsumerState<StatisticScreen> {
             historyAsync.when(
               data: (records) {
                 if (records.isEmpty) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 60),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.analytics_outlined,
-                          size: 64,
-                          color: color.outline,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Belum ada data statistik.\nLakukan screening terlebih dahulu.',
-                          textAlign: TextAlign.center,
-                          style: textStyle.bodyMedium,
-                        ),
-                      ],
+                  return SizedBox(
+                    height: MediaQuery.of(context).size.height - 250,
+                    child: Center(
+                      child: EmptyState(
+                        color: color,
+                        textStyle: textStyle,
+                        icon: Icons.insights_outlined,
+                        mainTitle: 'Belum Ada Statistik',
+                        subTitle:
+                            'Statistik akan tersedia setelah anda melakukan \nskrining pertama kali',
+                      ),
                     ),
                   );
                 }

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/history_provider.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/button_action.dart';
-import 'package:insightmind_app/features/insightmind/presentation/widget/empty_history.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/empty_state.dart';
+
 import 'package:insightmind_app/features/insightmind/presentation/widget/history_item.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_page.dart';
@@ -141,13 +142,16 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
               data: (items) {
                 // Jika riwayat masih kosong, akan menampilkan widget empty history
                 if (items.isEmpty) {
-                  return EmptyHistory(
-                    color: color,
-                    textStyle: textStyle,
-                    imagePath: 'assets/image/empty_box.png',
-                    mainTitle: 'Belum Ada Riwayat',
-                    subTitle:
-                        'Mulai skrining pertama anda untuk melihat\nriwayat hasil di sini',
+                  return SizedBox(
+                    height: MediaQuery.of(context).size.height - 250,
+                    child: EmptyState(
+                      color: color,
+                      textStyle: textStyle,
+                      icon:Icons.receipt_long_outlined,
+                      mainTitle: 'Belum Ada Riwayat',
+                      subTitle:
+                          'Mulai skrining pertama anda untuk melihat\nriwayat hasil di sini',
+                    ),
                   );
                 }
 
