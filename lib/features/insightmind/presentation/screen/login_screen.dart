@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:insightmind_app/features/insightmind/data/local/user.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/navigation_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/register_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/button_action.dart';
@@ -14,6 +16,43 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  void _login() {
+    debugPrint("Login button pressed");
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    debugPrint("Email: $email");
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Email dan kata sandi harus diisi")),
+      );
+      return;
+    }
+
+    debugPrint("Checking if box is open...");
+    final usersBox = Hive.box<User>('users');
+    debugPrint("Box is open. Searching user...");
+    final user = usersBox.values.firstWhere(
+      (u) => u.email == email && u.password == password,
+      orElse: () =>
+          User(name: '', email: '', password: ''), // Dummy user if not found
+    );
+    debugPrint("User found status: ${user.email.isNotEmpty}");
+
+    if (user.email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Email atau kata sandi salah")),
+      );
+      return;
+    }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const NavigationScreen()),
+    );
+  }
 
   @override
   void dispose() {
@@ -82,15 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: color,
                     textStyle: textStyle,
                     titleAction: "Masuk",
-                    onPressed: () {
-                      // Mock login navigation
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const NavigationScreen(),
-                        ),
-                      );
-                    },
+                    onPressed: _login,
                   ),
                 ],
               ),
