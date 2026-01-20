@@ -9,6 +9,8 @@ import 'package:insightmind_app/features/insightmind/presentation/widget/history
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/start_screening.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_action.dart';
+import 'package:insightmind_app/features/insightmind/presentation/screen/login_screen.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widget/alert_confirmation.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_page.dart';
 import 'package:intl/intl.dart';
 
@@ -61,6 +63,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         centerTitle: true,
         scrolledUnderElevation: 0,
         backgroundColor: color.surface,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final confirm = await showConfirmationSheet(
+                context: context,
+                color: color,
+                textStyle: textStyle,
+                title: 'Konfirmasi Keluar',
+                description: 'Apakah Anda yakin ingin keluar dari akun?',
+                confirmTitle: 'Keluar',
+                cancelTitle: 'Batal',
+                icon: Icons.logout,
+                iconColor: Colors.red,
+              );
+              if (confirm == true) {
+                if (context.mounted) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                    (route) => false,
+                  );
+                }
+              }
+            },
+            icon: Icon(Icons.logout, color: color.error),
+          ),
+          const SizedBox(width: 8),
+        ],
         title: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
           opacity: _isScrolling ? 1.0 : 0.0,
