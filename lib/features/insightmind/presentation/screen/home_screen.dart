@@ -171,16 +171,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               mainTitle: 'Riwayat Skrining',
               // Memberikan informasi terkhir kali melakukan skrining
               subTitle: historyAsync.when(
-                data: (records) => records.isNotEmpty
-                    ? 'Terakhir, '
-                              '${records.first.timestamp.day} '
-                              '${DateFormat('MMMM').format(records.first.timestamp)} '
-                              '${records.first.timestamp.year}'
-                          .toUpperCase()
-                    : 'Belum ada riwayat'.toUpperCase(),
+                data: (records) {
+                  if (records.isEmpty) {
+                    return 'Belum ada riwayat'.toUpperCase();
+                  }
+
+                  // Mengurutkan data riwayat berdasarkan timestamp terbaru
+                  final sortedRecords = [...records]
+                    ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+                  final last = sortedRecords.first;
+
+                  return 'Terakhir, '
+                          '${last.timestamp.day} '
+                          '${DateFormat('MMMM').format(last.timestamp)} '
+                          '${last.timestamp.year}'
+                      .toUpperCase();
+                },
                 loading: () => 'Memuat...',
                 error: (_, __) => 'Gagal memuat',
               ),
+
               iconAction: Icons.arrow_forward,
               actionType: ActionType.elevated,
               onPressed: () {
@@ -206,8 +217,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   );
                 }
 
-                // Mengambil 4 data terakhir dari daftar riwayat
-                final latestRecords = items.take(4).toList();
+                final sortedItems = [...items]
+                  ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+                // Ambil 4 data TERBARU
+                final latestRecords = sortedItems.take(4).toList();
+
                 return Column(
                   children: latestRecords.map((r) {
                     return Padding(
