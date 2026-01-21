@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:insightmind_app/config/api_config.dart';
 import 'package:uuid/uuid.dart';
 
 class ChatMessage {
@@ -41,7 +42,6 @@ class ChatState {
 }
 
 class ChatNotifier extends Notifier<ChatState> {
-  static const _apiKey = 'AIzaSyCC7qyU1EEJ-0_uqNTWkkuwagVLN-YabSw';
   GenerativeModel? _model;
   ChatSession? _chatSession;
   final _uuid = const Uuid();
@@ -51,7 +51,7 @@ class ChatNotifier extends Notifier<ChatState> {
     try {
       _model = GenerativeModel(
         model: 'gemini-2.5-flash',
-        apiKey: _apiKey,
+        apiKey: ApiConfig.geminiApiKey,
       );
       _chatSession = _model?.startChat();
       

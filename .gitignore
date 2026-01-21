@@ -43,3 +43,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# API Keys and Sensitive Configuration
+# Never commit API keys to version control
+lib/config/api_config.dart

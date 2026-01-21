@@ -1,9 +1,10 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:insightmind_app/config/api_config.dart';
 
 void main() async {
-  final apiKey = 'AIzaSyCC7qyU1EEJ-0_uqNTWkkuwagVLN-YabSw';
+  final apiKey = ApiConfig.geminiApiKey;
   final url = Uri.parse('https://generativelanguage.googleapis.com/v1beta/models?key=$apiKey');
 
   try {

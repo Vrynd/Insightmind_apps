@@ -1,11 +1,12 @@
 
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:insightmind_app/config/api_config.dart';
 
 void main() async {
-  final apiKey = 'AIzaSyCC7qyU1EEJ-0_uqNTWkkuwagVLN-YabSw';
+  final apiKey = ApiConfig.geminiApiKey;
   
-  if (apiKey == 'AIzaSy...') {
-    print('Please replace with your actual API key');
+  if (apiKey == 'YOUR_GEMINI_API_KEY_HERE') {
+    print('Please setup your API key in lib/config/api_config.dart');
     return;
   }
 
