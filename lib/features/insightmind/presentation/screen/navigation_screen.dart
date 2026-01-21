@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/home_screen.dart';
+import 'package:insightmind_app/features/insightmind/presentation/screen/setting_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/statistic_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';

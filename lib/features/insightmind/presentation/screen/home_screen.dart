@@ -65,8 +65,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         centerTitle: true,
         scrolledUnderElevation: 0,
         backgroundColor: color.surface,
-<<<<<<< HEAD
-=======
         actions: [
           const ThemeToggleIconButton(),
           IconButton(
@@ -97,7 +95,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           const SizedBox(width: 8),
         ],
->>>>>>> b2d7e55429b013a9702e5986d4554e828c7452de
         title: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
           opacity: _isScrolling ? 1.0 : 0.0,
