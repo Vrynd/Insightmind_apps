@@ -44,9 +44,5 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/image/banner_health.png
-    - assets/image/banner_mental_health.png
-    - assets/image/empty_state.png
-    - assets/image/empty.png
-    - assets/image/empty_box.png
-    - assets/image/mindset.png
+    - assets/image/
+    - assets/image/logo.png
