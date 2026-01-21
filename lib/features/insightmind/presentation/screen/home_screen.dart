@@ -224,7 +224,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 final latestRecords = sortedItems.take(4).toList();
 
                 return Column(
-                  children: latestRecords.map((r) {
+                  children: latestRecords.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final r = entry.value;
+
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10.0),
                       child: HistoryItem(
@@ -237,6 +240,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         score: r.score,
                         timestamp: r.timestamp,
                         showDeleteIcon: false,
+                        isLatest: index == 0,
                       ),
                     );
                   }).toList(),
