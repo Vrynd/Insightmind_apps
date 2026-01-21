@@ -13,6 +13,7 @@ import 'package:insightmind_app/features/insightmind/presentation/widget/title_a
 import 'package:insightmind_app/features/insightmind/presentation/screen/login_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/alert_confirmation.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_page.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widgets/theme_toggle_widget.dart';
 import 'package:intl/intl.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -64,6 +65,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         centerTitle: true,
         scrolledUnderElevation: 0,
         backgroundColor: color.surface,
+<<<<<<< HEAD
+=======
+        actions: [
+          const ThemeToggleIconButton(),
+          IconButton(
+            onPressed: () async {
+              final confirm = await showConfirmationSheet(
+                context: context,
+                color: color,
+                textStyle: textStyle,
+                title: 'Konfirmasi Keluar',
+                description: 'Apakah Anda yakin ingin keluar dari akun?',
+                confirmTitle: 'Keluar',
+                cancelTitle: 'Batal',
+                icon: Icons.logout,
+                iconColor: Colors.red,
+              );
+              if (confirm == true) {
+                if (context.mounted) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                    (route) => false,
+                  );
+                }
+              }
+            },
+            icon: Icon(Icons.logout, color: color.error),
+          ),
+          const SizedBox(width: 8),
+        ],
+>>>>>>> b2d7e55429b013a9702e5986d4554e828c7452de
         title: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
           opacity: _isScrolling ? 1.0 : 0.0,
@@ -178,16 +212,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               mainTitle: 'Riwayat Skrining',
               // Memberikan informasi terkhir kali melakukan skrining
               subTitle: historyAsync.when(
-                data: (records) => records.isNotEmpty
-                    ? 'Terakhir, '
-                              '${records.first.timestamp.day} '
-                              '${DateFormat('MMMM').format(records.first.timestamp)} '
-                              '${records.first.timestamp.year}'
-                          .toUpperCase()
-                    : 'Belum ada riwayat'.toUpperCase(),
+                data: (records) {
+                  if (records.isEmpty) {
+                    return 'Belum ada riwayat'.toUpperCase();
+                  }
+
+                  // Mengurutkan data riwayat berdasarkan timestamp terbaru
+                  final sortedRecords = [...records]
+                    ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+                  final last = sortedRecords.first;
+
+                  return 'Terakhir, '
+                          '${last.timestamp.day} '
+                          '${DateFormat('MMMM').format(last.timestamp)} '
+                          '${last.timestamp.year}'
+                      .toUpperCase();
+                },
                 loading: () => 'Memuat...',
                 error: (_, __) => 'Gagal memuat',
               ),
+
               iconAction: Icons.arrow_forward,
               actionType: ActionType.elevated,
               onPressed: () {
@@ -213,10 +258,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   );
                 }
 
-                // Mengambil 4 data terakhir dari daftar riwayat
-                final latestRecords = items.take(4).toList();
+                final sortedItems = [...items]
+                  ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+                // Ambil 4 data TERBARU
+                final latestRecords = sortedItems.take(4).toList();
+
                 return Column(
-                  children: latestRecords.map((r) {
+                  children: latestRecords.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final r = entry.value;
+
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10.0),
                       child: HistoryItem(
@@ -229,6 +281,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         score: r.score,
                         timestamp: r.timestamp,
                         showDeleteIcon: false,
+                        isLatest: index == 0,
                       ),
                     );
                   }).toList(),

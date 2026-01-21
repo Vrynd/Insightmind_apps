@@ -1,32 +1,32 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'screening_record.dart';
+part of 'feedback_item.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class ScreeningRecordAdapter extends TypeAdapter<ScreeningRecord> {
+class FeedbackItemAdapter extends TypeAdapter<FeedbackItem> {
   @override
-  final int typeId = 1;
+  final int typeId = 3;
 
   @override
-  ScreeningRecord read(BinaryReader reader) {
+  FeedbackItem read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return ScreeningRecord(
+    return FeedbackItem(
       id: fields[0] as String,
       timestamp: fields[1] as DateTime,
-      score: fields[2] as int,
-      riskLevel: fields[3] as String,
-      note: fields[4] as String?,
+      featureSuggestion: fields[2] as String,
+      bugReport: fields[3] as String,
+      satisfactionLevel: fields[4] as int,
     );
   }
 
   @override
-  void write(BinaryWriter writer, ScreeningRecord obj) {
+  void write(BinaryWriter writer, FeedbackItem obj) {
     writer
       ..writeByte(5)
       ..writeByte(0)
@@ -34,11 +34,11 @@ class ScreeningRecordAdapter extends TypeAdapter<ScreeningRecord> {
       ..writeByte(1)
       ..write(obj.timestamp)
       ..writeByte(2)
-      ..write(obj.score)
+      ..write(obj.featureSuggestion)
       ..writeByte(3)
-      ..write(obj.riskLevel)
+      ..write(obj.bugReport)
       ..writeByte(4)
-      ..write(obj.note);
+      ..write(obj.satisfactionLevel);
   }
 
   @override
@@ -47,7 +47,7 @@ class ScreeningRecordAdapter extends TypeAdapter<ScreeningRecord> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ScreeningRecordAdapter &&
+      other is FeedbackItemAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
