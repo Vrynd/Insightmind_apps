@@ -97,16 +97,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: textStyle.bodyLarge?.copyWith(
                   color: color.onSurfaceVariant,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  "Selamat datang kembali di InsightMind",
-                  style: textStyle.bodyLarge?.copyWith(
-                    color: color.onSurfaceVariant,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-                LayoutBuilder(
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              LayoutBuilder(
                   builder: (context, constraints) {
                     final screenWidth = MediaQuery.of(context).size.width;
                     final logoSize = screenWidth > 600 ? 200.0 : 140.0;
@@ -197,7 +191,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }
