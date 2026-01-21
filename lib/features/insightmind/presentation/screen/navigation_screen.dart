@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/home_screen.dart';
-import 'package:insightmind_app/features/insightmind/presentation/screen/statistic_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/setting_screen.dart';
+import 'package:insightmind_app/features/insightmind/presentation/screen/statistic_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
@@ -28,7 +28,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
         _ => const HomeScreen(),
       },
       bottomNavigationBar: SalomonBottomBar(
-        margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
+        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
         currentIndex: selectedIndex,
         onTap: (i) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/history_provider.dart';
+import 'package:insightmind_app/features/insightmind/presentation/screen/chat_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/history_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/screening_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/banner_app.dart';
@@ -12,6 +13,7 @@ import 'package:insightmind_app/features/insightmind/presentation/widget/title_a
 import 'package:insightmind_app/features/insightmind/presentation/screen/login_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/alert_confirmation.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_page.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widgets/theme_toggle_widget.dart';
 import 'package:intl/intl.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -64,6 +66,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         scrolledUnderElevation: 0,
         backgroundColor: color.surface,
         actions: [
+          const ThemeToggleIconButton(),
           IconButton(
             onPressed: () async {
               final confirm = await showConfirmationSheet(
@@ -120,6 +123,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
       ),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.blue.withOpacity(0.3),
+              blurRadius: 20,
+              spreadRadius: 2,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: Colors.blue.withOpacity(0.15),
+              blurRadius: 30,
+              spreadRadius: 5,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const ChatScreen(),
+              ),
+            );
+          },
+          backgroundColor: Colors.blue[100],
+          elevation: 0,
+          child: Icon(
+            Icons.chat_bubble,
+            color: Colors.blue[800],
+            size: 28,
+          ),
+        ),
+      ),
       body: ScrollConfiguration(
         behavior: const ScrollBehavior().copyWith(
           overscroll: false,
@@ -171,16 +209,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               mainTitle: 'Riwayat Skrining',
               // Memberikan informasi terkhir kali melakukan skrining
               subTitle: historyAsync.when(
-                data: (records) => records.isNotEmpty
-                    ? 'Terakhir, '
-                              '${records.first.timestamp.day} '
-                              '${DateFormat('MMMM').format(records.first.timestamp)} '
-                              '${records.first.timestamp.year}'
-                          .toUpperCase()
-                    : 'Belum ada riwayat'.toUpperCase(),
+                data: (records) {
+                  if (records.isEmpty) {
+                    return 'Belum ada riwayat'.toUpperCase();
+                  }
+
+                  // Mengurutkan data riwayat berdasarkan timestamp terbaru
+                  final sortedRecords = [...records]
+                    ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+                  final last = sortedRecords.first;
+
+                  return 'Terakhir, '
+                          '${last.timestamp.day} '
+                          '${DateFormat('MMMM').format(last.timestamp)} '
+                          '${last.timestamp.year}'
+                      .toUpperCase();
+                },
                 loading: () => 'Memuat...',
                 error: (_, __) => 'Gagal memuat',
               ),
+
               iconAction: Icons.arrow_forward,
               actionType: ActionType.elevated,
               onPressed: () {
@@ -206,10 +255,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   );
                 }
 
-                // Mengambil 4 data terakhir dari daftar riwayat
-                final latestRecords = items.take(4).toList();
+                final sortedItems = [...items]
+                  ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+                // Ambil 4 data TERBARU
+                final latestRecords = sortedItems.take(4).toList();
+
                 return Column(
-                  children: latestRecords.map((r) {
+                  children: latestRecords.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final r = entry.value;
+
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10.0),
                       child: HistoryItem(
@@ -222,6 +278,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         score: r.score,
                         timestamp: r.timestamp,
                         showDeleteIcon: false,
+                        isLatest: index == 0,
                       ),
                     );
                   }).toList(),

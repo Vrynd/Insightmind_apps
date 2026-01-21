@@ -5,6 +5,7 @@ import 'package:insightmind_app/features/insightmind/presentation/screen/navigat
 import 'package:insightmind_app/features/insightmind/presentation/screen/register_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/button_action.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widgets/theme_toggle_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -70,19 +71,31 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 450),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  "Masuk",
-                  style: textStyle.displaySmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: color.primary,
-                  ),
-                  textAlign: TextAlign.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Dark mode toggle di pojok kanan atas
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: const [
+                  ThemeToggleSwitch(),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Text(
+                "Masuk",
+                style: textStyle.displaySmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: color.primary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Selamat datang kembali di InsightMind",
+                style: textStyle.bodyLarge?.copyWith(
+                  color: color.onSurfaceVariant,
                 ),
                 const SizedBox(height: 8),
                 Text(

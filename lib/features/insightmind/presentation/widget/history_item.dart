@@ -12,6 +12,7 @@ class HistoryItem extends StatelessWidget {
   final DateTime timestamp;
   final bool showDeleteIcon;
   final VoidCallback? onDelete;
+  final bool isLatest;
 
   const HistoryItem({
     super.key,
@@ -24,6 +25,7 @@ class HistoryItem extends StatelessWidget {
     required this.riskLevel,
     required this.timestamp,
     this.showDeleteIcon = true,
+    this.isLatest = false,
     this.onDelete,
   });
 
@@ -156,6 +158,25 @@ class HistoryItem extends StatelessWidget {
                   ],
                 ),
                 const Spacer(),
+                if (isLatest)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: color.primary,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'TERBARU',
+                      style: textStyle.labelSmall?.copyWith(
+                        color: color.onPrimary,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.6,
+                      ),
+                    ),
+                  ),
                 if (showDeleteIcon) ...[
                   InkWell(
                     onTap: onDelete,

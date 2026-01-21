@@ -210,10 +210,10 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
               ButtonAction(
                 color: color,
                 textStyle: textStyle,
-                buttonColor: Colors.orange.shade200,
+                buttonColor: color.errorContainer,
                 flex: 1,
                 iconAction: Icons.refresh,
-                iconActionColor: Colors.orange.shade800,
+                iconActionColor: color.error,
                 enabled: isAnyAnswered,
                 onPressed: () async {
                   final result = await showConfirmationSheet(
@@ -221,8 +221,8 @@ class _ScreeningScreenState extends ConsumerState<ScreeningScreen> {
                     color: color,
                     textStyle: textStyle,
                     icon: Icons.refresh,
-                    iconColor: Colors.orange.shade800,
-                    iconBackground: Colors.orange.shade100,
+                    iconColor: color.error,
+                    iconBackground: color.errorContainer,
                     title: 'Reset Progress?',
                     description:
                         'Semua jawaban yang sudah diisi akan terhapus. Yakin ingin reset progress?',
