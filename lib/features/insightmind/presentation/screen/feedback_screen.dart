@@ -32,27 +32,27 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     final now = DateTime.now();
     final id = '${now.millisecondsSinceEpoch}${Random().nextInt(9999)}';
 
-    final payload = {
-      'id': id,
-      'timestamp': DateFormat('yyyy-MM-dd HH:mm:ss').format(now),
-      'feature_suggestion': _featureController.text.trim(),
-      'bug_report': _bugController.text.trim(),
-      'satisfaction': _satisfaction,
-    };
-
     try {
-      await FeedbackStorage.saveFeedback(payload);
+      await FeedbackStorage.saveFeedback(
+        id: id,
+        timestamp: now,
+        featureSuggestion: _featureController.text.trim(),
+        bugReport: _bugController.text.trim(),
+        satisfactionLevel: _satisfaction,
+      );
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Terima kasih atas feedback Anda')),
         );
-        Navigator.of(context).pop();
+        _featureController.clear();
+        _bugController.clear();
+        setState(() => _satisfaction = 5);
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal menyimpan feedback: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Gagal menyimpan feedback: $e')));
       }
     } finally {
       if (mounted) setState(() => _submitting = false);
@@ -63,95 +63,144 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
     final textStyle = Theme.of(context).textTheme;
+    final feedbacks = FeedbackStorage.allFeedbacks().reversed.toList();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Feedback & Survey')),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Saran Fitur', style: textStyle.titleMedium),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _featureController,
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    hintText: 'Tuliskan saran fitur (opsional)',
-                    border: OutlineInputBorder(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Saran Fitur', style: textStyle.titleMedium),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _featureController,
+                    maxLines: 3,
+                    decoration: const InputDecoration(
+                      hintText: 'Tuliskan saran fitur (opsional)',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-
-                Text('Laporan Bug', style: textStyle.titleMedium),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _bugController,
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    hintText: 'Jelaskan langkah, hasil, dan harapan (opsional)',
-                    border: OutlineInputBorder(),
+                  const SizedBox(height: 16),
+                  Text('Laporan Bug', style: textStyle.titleMedium),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _bugController,
+                    maxLines: 3,
+                    decoration: const InputDecoration(
+                      hintText:
+                          'Jelaskan langkah, hasil, dan harapan (opsional)',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-
-                Text('Tingkat Kepuasan', style: textStyle.titleMedium),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: List.generate(5, (i) {
-                    final v = i + 1;
-                    return ChoiceChip(
-                      label: Text('$v'),
-                      selected: _satisfaction == v,
-                      onSelected: (_) => setState(() => _satisfaction = v),
-                    );
-                  }),
-                ),
-                const SizedBox(height: 24),
-
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _submitting ? null : _submit,
-                    child: _submitting
-                        ? const SizedBox(
-                            height: 18,
-                            width: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Kirim Feedback'),
+                  const SizedBox(height: 16),
+                  Text('Tingkat Kepuasan', style: textStyle.titleMedium),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: List.generate(5, (i) {
+                      final v = i + 1;
+                      return ChoiceChip(
+                        label: Text('$v'),
+                        selected: _satisfaction == v,
+                        onSelected: (_) => setState(() => _satisfaction = v),
+                      );
+                    }),
                   ),
-                ),
-                const SizedBox(height: 12),
-                TextButton(
-                  onPressed: () async {
-                    final all = await FeedbackStorage.allFeedbacks();
-                    if (!mounted) return;
-                    showDialog(
-                      context: context,
-                      builder: (c) => AlertDialog(
-                        title: const Text('Contoh Data Tersimpan'),
-                        content: SizedBox(
-                          width: double.maxFinite,
-                          child: SingleChildScrollView(
-                            child: Text(all.isEmpty ? 'Belum ada' : all.reversed.take(5).map((e) => e.toString()).join('\n\n')),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _submitting ? null : _submit,
+                      child: _submitting
+                          ? const SizedBox(
+                              height: 18,
+                              width: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('Kirim Feedback'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+            const Divider(),
+            const SizedBox(height: 16),
+            Text('Riwayat Feedback', style: textStyle.titleLarge),
+            const SizedBox(height: 16),
+            feedbacks.isEmpty
+                ? const Center(child: Text('Belum ada feedback yang dikirim'))
+                : ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: feedbacks.length,
+                    itemBuilder: (context, index) {
+                      final item = feedbacks[index];
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    DateFormat(
+                                      'dd MMM yyyy, HH:mm',
+                                    ).format(item.timestamp),
+                                    style: textStyle.labelSmall,
+                                  ),
+                                  Row(
+                                    children: List.generate(
+                                      5,
+                                      (i) => Icon(
+                                        Icons.star,
+                                        size: 14,
+                                        color: i < item.satisfactionLevel
+                                            ? Colors.amber
+                                            : Colors.grey.shade300,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              if (item.featureSuggestion.isNotEmpty) ...[
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Saran Fitur:',
+                                  style: textStyle.labelLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(item.featureSuggestion),
+                              ],
+                              if (item.bugReport.isNotEmpty) ...[
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Laporan Bug:',
+                                  style: textStyle.labelLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(item.bugReport),
+                              ],
+                            ],
                           ),
                         ),
-                        actions: [
-                          TextButton(onPressed: () => Navigator.pop(c), child: const Text('Tutup')),
-                        ],
-                      ),
-                    );
-                  },
-                  child: const Text('Lihat sampel data tersimpan'),
-                ),
-              ],
-            ),
-          ),
+                      );
+                    },
+                  ),
+          ],
         ),
       ),
     );
