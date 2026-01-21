@@ -5,6 +5,7 @@ import 'package:insightmind_app/features/insightmind/presentation/screen/navigat
 import 'package:insightmind_app/features/insightmind/presentation/screen/register_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/button_action.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widgets/theme_toggle_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -74,6 +75,14 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Dark mode toggle di pojok kanan atas
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: const [
+                  ThemeToggleSwitch(),
+                ],
+              ),
+              const SizedBox(height: 24),
               Text(
                 "Masuk",
                 style: textStyle.displaySmall?.copyWith(

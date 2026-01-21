@@ -12,6 +12,7 @@ import 'package:insightmind_app/features/insightmind/presentation/widget/title_a
 import 'package:insightmind_app/features/insightmind/presentation/screen/login_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/alert_confirmation.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_page.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widgets/theme_toggle_widget.dart';
 import 'package:intl/intl.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -64,6 +65,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         scrolledUnderElevation: 0,
         backgroundColor: color.surface,
         actions: [
+          const ThemeToggleIconButton(),
           IconButton(
             onPressed: () async {
               final confirm = await showConfirmationSheet(
