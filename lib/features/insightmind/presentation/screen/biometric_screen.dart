@@ -201,7 +201,12 @@ class _BiometricScreenState extends ConsumerState<BiometricScreen> {
               onPressed: () {
                 if (ppg.samples.length < 30) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
+                    SnackBar(
+                      behavior: SnackBarBehavior.floating,
+                      margin: const EdgeInsets.all(16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       content: Text(
                         "Ambil minimal 30 sampel PPG terlebih dahulu",
                       ),
