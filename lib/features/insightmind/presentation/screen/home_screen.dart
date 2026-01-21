@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insightmind_app/features/insightmind/presentation/providers/history_provider.dart';
+import 'package:insightmind_app/features/insightmind/presentation/screen/chat_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/history_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/screen/screening_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/banner_app.dart';
@@ -63,35 +64,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         centerTitle: true,
         scrolledUnderElevation: 0,
         backgroundColor: color.surface,
-        actions: [
-          IconButton(
-            onPressed: () async {
-              final confirm = await showConfirmationSheet(
-                context: context,
-                color: color,
-                textStyle: textStyle,
-                title: 'Konfirmasi Keluar',
-                description: 'Apakah Anda yakin ingin keluar dari akun?',
-                confirmTitle: 'Keluar',
-                cancelTitle: 'Batal',
-                icon: Icons.logout,
-                iconColor: Colors.red,
-              );
-              if (confirm == true) {
-                if (context.mounted) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ),
-                    (route) => false,
-                  );
-                }
-              }
-            },
-            icon: Icon(Icons.logout, color: color.error),
-          ),
-          const SizedBox(width: 8),
-        ],
         title: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
           opacity: _isScrolling ? 1.0 : 0.0,
@@ -117,6 +89,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.blue.withOpacity(0.3),
+              blurRadius: 20,
+              spreadRadius: 2,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: Colors.blue.withOpacity(0.15),
+              blurRadius: 30,
+              spreadRadius: 5,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const ChatScreen(),
+              ),
+            );
+          },
+          backgroundColor: Colors.blue[100],
+          elevation: 0,
+          child: Icon(
+            Icons.chat_bubble,
+            color: Colors.blue[800],
+            size: 28,
           ),
         ),
       ),
