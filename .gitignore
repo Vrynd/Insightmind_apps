@@ -45,5 +45,5 @@ app.*.map.json
 /android/app/release
 
 # API Keys and Sensitive Configuration
-# Never commit API keys to version control
-lib/config/api_config.dart
+# Never commit actual production API keys to version control
+# .env files or other sensitive files should be added here
