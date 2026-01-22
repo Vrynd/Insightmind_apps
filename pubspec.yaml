@@ -29,7 +29,6 @@ dependencies:
   syncfusion_flutter_charts: ^32.1.23
   pdf: ^3.11.3
   printing: ^5.14.2
-  google_generative_ai: ^0.4.7
   flutter_markdown: ^0.7.7+1
 
 dev_dependencies:
