@@ -174,9 +174,16 @@ Kontribusi welcome! Mohon:
 
 [Add your license here]
 
-## 👨‍💻 Author
+## 👨‍💻 Tim Pengembang InsightMind
 
-InsightMind Team
+Proyek ini dikembangkan oleh:
+
+- **Rifky Verryan Dhika** (5230411112)
+- **Muhammad Rizky Ernando** (5230411117)
+- **Ginanjar Dwi Satriyo** (5230411129)
+- **Revaldo Ilham Maulana** (5230411134)
+- **Louis Mahardhika** (5230411139)
+- **Yogi Marliyano** (5230411062)
 
 ---
 
