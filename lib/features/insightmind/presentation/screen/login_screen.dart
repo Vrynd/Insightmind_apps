@@ -5,7 +5,6 @@ import 'package:insightmind_app/features/insightmind/presentation/screen/navigat
 import 'package:insightmind_app/features/insightmind/presentation/screen/register_screen.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/button_action.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
-import 'package:insightmind_app/features/insightmind/presentation/widgets/theme_toggle_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -75,13 +74,6 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Dark mode toggle di pojok kanan atas
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: const [
-                  ThemeToggleSwitch(),
-                ],
-              ),
               const SizedBox(height: 24),
               Text(
                 "Masuk",
@@ -99,7 +91,36 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 24),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final screenWidth = MediaQuery.of(context).size.width;
+                  final logoSize = screenWidth > 600 ? 200.0 : 140.0;
+                  return Center(
+                    child: Image.asset(
+                      'assets/image/logo.png',
+                      height: logoSize,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: logoSize,
+                          width: logoSize,
+                          decoration: BoxDecoration(
+                            color: color.primaryContainer,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.psychology,
+                            size: logoSize * 0.5,
+                            color: color.primary,
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 32),
               TextField(
                 controller: _emailController,
                 decoration: InputDecoration(

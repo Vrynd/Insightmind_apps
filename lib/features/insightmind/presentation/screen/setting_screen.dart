@@ -8,6 +8,7 @@ import 'package:insightmind_app/features/insightmind/data/local/user.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/scaffold_app.dart';
 import 'package:insightmind_app/features/insightmind/presentation/widget/title_page.dart';
+import 'package:insightmind_app/features/insightmind/presentation/widgets/theme_toggle_widget.dart';
 
 class SettingScreen extends ConsumerWidget {
   const SettingScreen({super.key});
@@ -40,7 +41,7 @@ class SettingScreen extends ConsumerWidget {
               leading: Icon(Icons.palette_outlined, color: color.primary),
               title: Text('Tema', style: textStyle.titleMedium),
               subtitle: Text(
-                'Ubah tampilan aplikasi',
+                'Ubah tampilan aplikasi (Terang/Gelap)',
                 style: textStyle.bodyMedium,
               ),
               trailing: Icon(
@@ -48,9 +49,12 @@ class SettingScreen extends ConsumerWidget {
                 color: color.onSurfaceVariant,
               ),
               onTap: () {
-                // TODO: Implement theme selection
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Fitur tema akan segera hadir')),
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24.0),
+                    child: ThemeModeSelector(),
+                  ),
                 );
               },
             ),

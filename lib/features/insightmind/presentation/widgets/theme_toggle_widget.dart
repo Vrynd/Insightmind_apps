@@ -9,7 +9,11 @@ class ThemeToggleSwitch extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
-    final isDarkMode = themeMode == ThemeMode.dark;
+    final platformBrightness = MediaQuery.of(context).platformBrightness;
+    final isDarkMode =
+        themeMode == ThemeMode.dark ||
+        (themeMode == ThemeMode.system &&
+            platformBrightness == Brightness.dark);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -50,12 +54,14 @@ class ThemeToggleIconButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
-    final isDarkMode = themeMode == ThemeMode.dark;
+    final platformBrightness = MediaQuery.of(context).platformBrightness;
+    final isDarkMode =
+        themeMode == ThemeMode.dark ||
+        (themeMode == ThemeMode.system &&
+            platformBrightness == Brightness.dark);
 
     return IconButton(
-      icon: Icon(
-        isDarkMode ? Icons.light_mode : Icons.dark_mode,
-      ),
+      icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
       onPressed: () {
         ref.read(themeModeProvider.notifier).toggleTheme();
       },
@@ -71,7 +77,11 @@ class ThemeToggleListTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
-    final isDarkMode = themeMode == ThemeMode.dark;
+    final platformBrightness = MediaQuery.of(context).platformBrightness;
+    final isDarkMode =
+        themeMode == ThemeMode.dark ||
+        (themeMode == ThemeMode.system &&
+            platformBrightness == Brightness.dark);
 
     return ListTile(
       leading: Icon(
@@ -111,9 +121,9 @@ class ThemeModeSelector extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text(
             'Tema Aplikasi',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         RadioListTile<ThemeMode>(

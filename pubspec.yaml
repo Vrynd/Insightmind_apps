@@ -29,7 +29,6 @@ dependencies:
   syncfusion_flutter_charts: ^32.1.23
   pdf: ^3.11.3
   printing: ^5.14.2
-  google_generative_ai: ^0.4.7
   flutter_markdown: ^0.7.7+1
 
 dev_dependencies:
@@ -44,9 +43,5 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/image/banner_health.png
-    - assets/image/banner_mental_health.png
-    - assets/image/empty_state.png
-    - assets/image/empty.png
-    - assets/image/empty_box.png
-    - assets/image/mindset.png
+    - assets/image/
+    - assets/image/logo.png
